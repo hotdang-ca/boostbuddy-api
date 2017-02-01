@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Response;
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -12,5 +14,5 @@
 */
 
 $app->get('/', function () use ($app) {
-    return $app->version();
+    return 'oh hai!';
 });
