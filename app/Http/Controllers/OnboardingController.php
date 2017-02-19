@@ -35,7 +35,7 @@ class OnboardingController extends Controller
       $originDescription = $request->origin['description'];
 
       // if it's a tow
-      if (strcmp($serviceType, "tow") == 0) {
+      if (strcmp($serviceType, "tow") === 0) {
         $destinationLat = $request->destination['lat'];
         $destinationLng = $request->destination['lng'];
         $destinationLabel = $request->destination['label'];
@@ -56,6 +56,7 @@ class OnboardingController extends Controller
       $jsonResponse['origin']['lng'] = $originLng;
       $jsonResponse['origin']['label'] = $originLabel;
       $jsonResponse['origin']['description'] = $originDescription;
+      // TODO: is the lat/lng even in the service area?
 
       if (strcmp($serviceType, "tow") === 0) {
         $jsonResponse['destination'] = array();
@@ -91,14 +92,46 @@ class OnboardingController extends Controller
         $price = 65;
       }
 
-      $jsonResponse['estimate'] = $price;
-      // $jsonResponse['GST'] = $price * 0.05;
-      // $jsonResponse['total'] = $price + ( $price * 0.05 );
 
-      // Make us an ORDER!
-      
+      $uuid = uniqid();
 
-      return response()->json($jsonResponse);
+      // we have everything we need... let's store it.
+      if (strcmp($serviceType, 'tow') === 0) {
+        DB::insert('insert into servicerequests (
+          firstname, lastname, phone, email, car_description, service_type,
+          origin_label, origin_desc, origin_lat, origin_lng,
+          destination_label, destination_desc, destination_lat, destination_lng, tow_distance,
+          quoted_price, order_number, isPaid
+        ) values (
+          ?, ?, ?, ?, ?, ?,
+          ?, ?, ?, ?,
+          ?, ?, ?, ?, ?,
+          ?, ?, ?)',
+        [
+          $firstname, $lastname, $phone, $email, $carDescription, $serviceType,
+          $originLabel, $originDescription, $originLat, $originLng,
+          $destinationLabel, $destinationDescription, $destinationLat, $destinationLng, $destinationQuotedDistance,
+          $price, $uuid, false
+        ]);
+      } else {
+        DB::insert('insert into servicerequests (
+          firstname, lastname, phone, email, car_description, service_type,
+          origin_label, origin_desc, origin_lat, origin_lng,
+          quoted_price, order_number, isPaid
+        ) values (
+          ?, ?, ?, ?, ?, ?,
+          ?, ?, ?, ?,
+          ?, ?, ?)',
+        [
+          $firstname, $lastname, $phone, $email, $carDescription, $serviceType,
+          $originLabel, $originDescription, $originLat, $originLng,
+          $price, $uuid, false
+        ]);
+      }
+
+      $results = DB::select("SELECT * FROM servicerequests WHERE order_number = '$uuid'");
+      return response()->json($results);
+      // return response()->json($jsonResponse);
     }
 
     public function receiveNameAndLocation(Request $request) {
@@ -123,7 +156,9 @@ class OnboardingController extends Controller
       }
 
       // TODO: store in database
+
       // TODO: dispatch an email event
+
       // TODO: assign a UUID that the client can use to associate additional fields to this service request
       return response()->json($jsonResponse);
     }
