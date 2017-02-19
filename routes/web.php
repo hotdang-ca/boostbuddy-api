@@ -20,5 +20,7 @@ $app->get('/', function () use ($app) {
 
 $app->group(['prefix' => 'api/v0'], function () use ($app) {
   $app->post('/service/request', 'OnboardingController@receiveServiceRequest');
-  $app->post('/service/request/paid', 'OnboardingController@markServiceRequestPaid');
+  $app->post('/service/request/{order}/pay', 'OnboardingController@markServiceRequestPaid');
+  $app->get('/service/request/{order}/status', 'OnboardingController@showServiceRequestStatus');
+  $app->post('/service/request/{order}/review', 'OnboardingController@reviewServiceRequest');
 });

@@ -131,7 +131,6 @@ class OnboardingController extends Controller
 
       $results = DB::select("SELECT * FROM servicerequests WHERE order_number = '$uuid'");
       return response()->json($results);
-      // return response()->json($jsonResponse);
     }
 
     public function receiveNameAndLocation(Request $request) {
