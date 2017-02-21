@@ -21,6 +21,118 @@ class OnboardingController extends Controller
       $this->SERVICE_TYPES = ['Boost', 'Tire Change', 'Fuel Delivery', 'Lock-out', 'Tow'];
     }
 
+    public function receiveServiceRequest(Request $request) {
+      $firstname = $request->firstname;
+      $lastname = $request->lastname;
+      $email = $request->email;
+      $phone = $request->phone;
+      $carDescription = $request->car_description;
+      $serviceType = $request->service_type;
+
+      $originLat = $request->origin['lat'];
+      $originLng = $request->origin['lng'];
+      $originLabel = $request->origin['label'];
+      $originDescription = $request->origin['description'];
+
+      // if it's a tow
+      if (strcmp($serviceType, "tow") === 0) {
+        $destinationLat = $request->destination['lat'];
+        $destinationLng = $request->destination['lng'];
+        $destinationLabel = $request->destination['label'];
+        $destinationDescription = $request->destination['description'];
+        $destinationQuotedDistance = $request->destination['quoted_distance'];
+      }
+
+      $jsonResponse = array();
+      $jsonResponse['firstname'] = $firstname;
+      $jsonResponse['lastname'] = $lastname;
+      $jsonResponse['email'] = $email;
+      $jsonResponse['phone'] = $phone;
+      $jsonResponse['carDescription'] = $carDescription;
+      $jsonResponse['serviceType'] = $serviceType;
+
+      $jsonResponse['origin'] = array();
+      $jsonResponse['origin']['lat'] = $originLat;
+      $jsonResponse['origin']['lng'] = $originLng;
+      $jsonResponse['origin']['label'] = $originLabel;
+      $jsonResponse['origin']['description'] = $originDescription;
+      // TODO: is the lat/lng even in the service area?
+
+      if (strcmp($serviceType, "tow") === 0) {
+        $jsonResponse['destination'] = array();
+        $jsonResponse['destination']['lat'] = $destinationLat;
+        $jsonResponse['destination']['lng'] = $destinationLng;
+        $jsonResponse['destination']['label'] = $destinationLabel;
+        $jsonResponse['destination']['description'] = $destinationDescription;
+        $jsonResponse['destination']['quotedDistance'] = $destinationQuotedDistance;
+      }
+
+      // calculate some magic prices
+      // Hey Gents I've spent the last 4-5 hours playing around with pricing.
+      // I will be doing up a more formalized copy - but for your situational
+      // awareness this is the draft:
+      // Within the service area Cost to Customer $65 (Boost/Tire Change/Fuel Delivery/Lockout),
+      //  provider gets $55, leaving us with $10.
+      //  Tows must originate from the service area- Cost to Customer $99 for 20km or less,
+      //  $2.50/km beyond,
+      //  provider gets $84 and $2.00/km beyond 20km, we get $15 and $0.50/km beyond 20km.
+      //
+      // Basis is providers earn 85% revenue on flat fees and 80% on variable rates.
+      // Providers choose the radius they are willing to service for at these standard
+      // price points.
+      $price = 0;
+
+      if (strcmp($serviceType, 'tow') === 0) {
+        $price = 99;
+        if (intval($destinationQuotedDistance) > 20) {
+          $difference = intval($destinationQuotedDistance) - 20;
+          $price = $price + ($difference * 2.50);
+        }
+      } else {
+        $price = 65;
+      }
+
+
+      $uuid = uniqid();
+
+      // we have everything we need... let's store it.
+      if (strcmp($serviceType, 'tow') === 0) {
+        DB::insert('insert into servicerequests (
+          firstname, lastname, phone, email, car_description, service_type,
+          origin_label, origin_desc, origin_lat, origin_lng,
+          destination_label, destination_desc, destination_lat, destination_lng, tow_distance,
+          quoted_price, order_number, isPaid
+        ) values (
+          ?, ?, ?, ?, ?, ?,
+          ?, ?, ?, ?,
+          ?, ?, ?, ?, ?,
+          ?, ?, ?)',
+        [
+          $firstname, $lastname, $phone, $email, $carDescription, $serviceType,
+          $originLabel, $originDescription, $originLat, $originLng,
+          $destinationLabel, $destinationDescription, $destinationLat, $destinationLng, $destinationQuotedDistance,
+          $price, $uuid, false
+        ]);
+      } else {
+        DB::insert('insert into servicerequests (
+          firstname, lastname, phone, email, car_description, service_type,
+          origin_label, origin_desc, origin_lat, origin_lng,
+          quoted_price, order_number, isPaid
+        ) values (
+          ?, ?, ?, ?, ?, ?,
+          ?, ?, ?, ?,
+          ?, ?, ?)',
+        [
+          $firstname, $lastname, $phone, $email, $carDescription, $serviceType,
+          $originLabel, $originDescription, $originLat, $originLng,
+          $price, $uuid, false
+        ]);
+      }
+
+      $results = DB::select("SELECT * FROM servicerequests WHERE order_number = '$uuid'");
+      return response()->json($results);
+    }
+
     public function receiveNameAndLocation(Request $request) {
       $jsonResponse = array();
 
@@ -43,7 +155,9 @@ class OnboardingController extends Controller
       }
 
       // TODO: store in database
+
       // TODO: dispatch an email event
+
       // TODO: assign a UUID that the client can use to associate additional fields to this service request
       return response()->json($jsonResponse);
     }
