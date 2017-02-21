@@ -102,31 +102,31 @@ class OnboardingController extends Controller
           firstname, lastname, phone, email, car_description, service_type,
           origin_label, origin_desc, origin_lat, origin_lng,
           destination_label, destination_desc, destination_lat, destination_lng, tow_distance,
-          quoted_price, order_number, isPaid
+          quoted_price, order_number, isPaid, created_at, updated_at
         ) values (
           ?, ?, ?, ?, ?, ?,
           ?, ?, ?, ?,
           ?, ?, ?, ?, ?,
-          ?, ?, ?)',
+          ?, ?, ?, ?, ?)',
         [
           $firstname, $lastname, $phone, $email, $carDescription, $serviceType,
           $originLabel, '', $originLat, $originLng,
           $destinationLabel, '', $destinationLat, $destinationLng, $destinationQuotedDistance,
-          $price, $uuid, false
+          $price, $uuid, false, date('Y-m-d H:i:s'), date('Y-m-d H:i:s')
         ]);
       } else {
         DB::insert('insert into servicerequests (
           firstname, lastname, phone, email, car_description, service_type,
           origin_label, origin_desc, origin_lat, origin_lng,
-          quoted_price, order_number, isPaid
+          quoted_price, order_number, isPaid, created_at, updated_at
         ) values (
           ?, ?, ?, ?, ?, ?,
           ?, ?, ?, ?,
-          ?, ?, ?)',
+          ?, ?, ?, ?, ?)',
         [
           $firstname, $lastname, $phone, $email, $carDescription, $serviceType,
           $originLabel, '', $originLat, $originLng,
-          $price, $uuid, false
+          $price, $uuid, false, date('Y-m-d H:i:s'), date('Y-m-d H:i:s')
         ]);
       }
 
