@@ -3,6 +3,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use Stripe\Stripe;
+use Stripe\Charge;
 
 class OnboardingController extends Controller
 {
@@ -19,6 +21,77 @@ class OnboardingController extends Controller
       $this->ERROR_415 = ['error' => ['code' => 415, 'description' => 'Your file type isn\'t welcome around these parts. Try a different file.']];
       $this->ERROR_413 = ['error' => ['code' => 413, 'description' => 'What are you trying to do?! That file is way too big.']];
       $this->SERVICE_TYPES = ['Boost', 'Tire Change', 'Fuel Delivery', 'Lock-out', 'Tow'];
+    }
+
+    public function markServiceRequestPaid(Request $request, $order) {
+      $pendingOrderSet = DB::select("SELECT * FROM servicerequests WHERE order_number = '$order'");
+      // TODO: verify length is at least 0
+      $pendingOrder = $pendingOrderSet[0];
+
+      $isPaid = $pendingOrder->isPaid;
+      $quotedPrice = $pendingOrder->quoted_price;
+      Stripe::setApiKey("sk_test_syNOkivWAVuWiTqUOyVCdlUw");
+      $token = $request->stripeToken;
+
+      try {
+        $charge = Charge::create(array(
+          "amount" => floatval($quotedPrice * 100),
+          "currency" => "cad",
+          "capture" => false,
+          "description" => "Boostbuddy Order $order",
+          "source" => $token,
+        ));
+      } catch (\Stripe\Error\Card $e) {
+        error_log($e);
+        // TODO: redirect to pay screen, with error text in the GET param
+        $errorReason = $e->jsonBody['error']['message'];
+        header("Location: https://service.boostbuddy.ca/payment-details?message=$errorReason");
+        exit();
+        // return response()->json(array("error" => $errorReason ));
+      }
+
+      error_log($charge);
+
+      // is paid?
+      $chargeId = $charge['id'];
+      $networkStatus = $charge['outcome']['network_status'];
+      $chargeType = $charge['outcome']['type'];
+      $hasBeenPaid = $charge['paid'];
+      $chargeStatus = $charge['status'];
+
+      // TODO: consider the fact that, maybe we can support a urlparam for this...
+      // but... what type of security would be involved?
+
+
+      if (setcookie("boostbuddy-order", $order, strtotime( '+30 days' ), "/", ".boostbuddy.ca", false, false)) {
+        // header("Set-Cookie: boostbuddy-order=58aa0d82b5a34; expires=Sat, 25-Mar-2017 16:42:50 GMT; Max-Age=2588400; path=/");
+        header("Location: http://api.boostbuddy.ca/api/v0/service/request/$order/validate");
+      } else {
+        // could not set cookie
+      }
+
+      // set the cookie with a validate enpoint
+      // what we'll do, is at this page, get a cookie.
+
+      exit();
+      // return response()->json(array(
+      //   "id" => $chargeId,
+      //   "networkStatus" => $chargeStatus,
+      //   "chargeType" => $chargeType,
+      //   "paymentStatus" => $hasBeenPaid,
+      //   "chargeStatus" => $chargeStatus
+      // ));
+    }
+
+    public function validateRequest(Request $request) {
+      $order = $_COOKIE['boostbuddy-order'];
+      if (isset($order)) {
+        header("Location: https://service.boostbuddy.ca/status");
+        exit();
+      } else {
+        return response()->json($_COOKIE);
+      }
+      // some sort of scary error.
     }
 
     public function receiveServiceRequest(Request $request) {
