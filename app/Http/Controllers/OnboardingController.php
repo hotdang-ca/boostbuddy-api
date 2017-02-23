@@ -32,14 +32,14 @@ class OnboardingController extends Controller
       $originLat = $request->origin['lat'];
       $originLng = $request->origin['lng'];
       $originLabel = $request->origin['label'];
-      $originDescription = $request->origin['description'];
+//      $originDescription = $request->origin['description'];
 
       // if it's a tow
       if (strcmp($serviceType, "tow") === 0) {
         $destinationLat = $request->destination['lat'];
         $destinationLng = $request->destination['lng'];
         $destinationLabel = $request->destination['label'];
-        $destinationDescription = $request->destination['description'];
+//        $destinationDescription = $request->destination['description'];
         $destinationQuotedDistance = $request->destination['quoted_distance'];
       }
 
@@ -55,7 +55,7 @@ class OnboardingController extends Controller
       $jsonResponse['origin']['lat'] = $originLat;
       $jsonResponse['origin']['lng'] = $originLng;
       $jsonResponse['origin']['label'] = $originLabel;
-      $jsonResponse['origin']['description'] = $originDescription;
+      $jsonResponse['origin']['description'] = '';
       // TODO: is the lat/lng even in the service area?
 
       if (strcmp($serviceType, "tow") === 0) {
@@ -63,7 +63,7 @@ class OnboardingController extends Controller
         $jsonResponse['destination']['lat'] = $destinationLat;
         $jsonResponse['destination']['lng'] = $destinationLng;
         $jsonResponse['destination']['label'] = $destinationLabel;
-        $jsonResponse['destination']['description'] = $destinationDescription;
+        $jsonResponse['destination']['description'] = '';
         $jsonResponse['destination']['quotedDistance'] = $destinationQuotedDistance;
       }
 
@@ -84,14 +84,15 @@ class OnboardingController extends Controller
 
       if (strcmp($serviceType, 'tow') === 0) {
         $price = 99;
-        if (intval($destinationQuotedDistance) > 20) {
-          $difference = intval($destinationQuotedDistance) - 20;
+	$kms = intval($destinationQuotedDistance) / 1000;
+
+        if ($kms > 20) { // its expressed in km
+          $difference = kms - 20;
           $price = $price + ($difference * 2.50);
         }
       } else {
         $price = 65;
       }
-
 
       $uuid = uniqid();
 
@@ -101,36 +102,36 @@ class OnboardingController extends Controller
           firstname, lastname, phone, email, car_description, service_type,
           origin_label, origin_desc, origin_lat, origin_lng,
           destination_label, destination_desc, destination_lat, destination_lng, tow_distance,
-          quoted_price, order_number, isPaid
+          quoted_price, order_number, isPaid, created_at, updated_at
         ) values (
           ?, ?, ?, ?, ?, ?,
           ?, ?, ?, ?,
           ?, ?, ?, ?, ?,
-          ?, ?, ?)',
+          ?, ?, ?, ?, ?)',
         [
           $firstname, $lastname, $phone, $email, $carDescription, $serviceType,
-          $originLabel, $originDescription, $originLat, $originLng,
-          $destinationLabel, $destinationDescription, $destinationLat, $destinationLng, $destinationQuotedDistance,
-          $price, $uuid, false
+          $originLabel, '', $originLat, $originLng,
+          $destinationLabel, '', $destinationLat, $destinationLng, $destinationQuotedDistance,
+          $price, $uuid, false, date('Y-m-d H:i:s'), date('Y-m-d H:i:s')
         ]);
       } else {
         DB::insert('insert into servicerequests (
           firstname, lastname, phone, email, car_description, service_type,
           origin_label, origin_desc, origin_lat, origin_lng,
-          quoted_price, order_number, isPaid
+          quoted_price, order_number, isPaid, created_at, updated_at
         ) values (
           ?, ?, ?, ?, ?, ?,
           ?, ?, ?, ?,
-          ?, ?, ?)',
+          ?, ?, ?, ?, ?)',
         [
           $firstname, $lastname, $phone, $email, $carDescription, $serviceType,
-          $originLabel, $originDescription, $originLat, $originLng,
-          $price, $uuid, false
+          $originLabel, '', $originLat, $originLng,
+          $price, $uuid, false, date('Y-m-d H:i:s'), date('Y-m-d H:i:s')
         ]);
       }
 
       $results = DB::select("SELECT * FROM servicerequests WHERE order_number = '$uuid'");
-      return response()->json($results);
+      return response()->json($results[0]);
     }
 
     public function receiveNameAndLocation(Request $request) {
