@@ -62,13 +62,39 @@ class OnboardingController extends Controller
       $hasBeenPaid = $charge['paid'];
       $chargeStatus = $charge['status'];
 
-      return response()->json(array(
-        "id" => $chargeId,
-        "networkStatus" => $chargeStatus,
-        "chargeType" => $chargeType,
-        "paymentStatus" => $hasBeenPaid,
-        "chargeStatus" => $chargeStatus
-      ));
+      // TODO: consider the fact that, maybe we can support a urlparam for this...
+      // but... what type of security would be involved?
+
+
+      if (setcookie("boostbuddy-order", $order, strtotime( '+30 days' ), "/", ".boostbuddy.ca", false, false)) {
+        // header("Set-Cookie: boostbuddy-order=58aa0d82b5a34; expires=Sat, 25-Mar-2017 16:42:50 GMT; Max-Age=2588400; path=/");
+        header("Location: http://dev.boostbuddy.ca:9000/api/v0/service/request/$order/validate");
+      } else {
+        // could not set cookie
+      }
+
+      // set the cookie with a validate enpoint
+      // what we'll do, is at this page, get a cookie.
+
+      exit();
+      // return response()->json(array(
+      //   "id" => $chargeId,
+      //   "networkStatus" => $chargeStatus,
+      //   "chargeType" => $chargeType,
+      //   "paymentStatus" => $hasBeenPaid,
+      //   "chargeStatus" => $chargeStatus
+      // ));
+    }
+
+    public function validateRequest(Request $request) {
+      $order = $_COOKIE['boostbuddy-order'];
+      if (isset($order)) {
+        header("Location: http://dev.boostbuddy.ca:3000/status");
+        exit();
+      } else {
+        return response()->json($_COOKIE);
+      }
+      // some sort of scary error.
     }
 
     public function receiveServiceRequest(Request $request) {
