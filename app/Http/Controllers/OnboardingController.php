@@ -24,8 +24,6 @@ class OnboardingController extends Controller
     }
 
     public function markServiceRequestPaid(Request $request, $order) {
-      $order = '58aa0d82b5a34';
-
       $pendingOrderSet = DB::select("SELECT * FROM servicerequests WHERE order_number = '$order'");
       // TODO: verify length is at least 0
       $pendingOrder = $pendingOrderSet[0];
@@ -34,7 +32,6 @@ class OnboardingController extends Controller
       $quotedPrice = $pendingOrder->quoted_price;
       Stripe::setApiKey("sk_test_syNOkivWAVuWiTqUOyVCdlUw");
       $token = $request->stripeToken;
-
 
       try {
         $charge = Charge::create(array(
@@ -48,7 +45,7 @@ class OnboardingController extends Controller
         error_log($e);
         // TODO: redirect to pay screen, with error text in the GET param
         $errorReason = $e->jsonBody['error']['message'];
-        header("Location: http://dev.boostbuddy.ca:3000/payment-details?message=$errorReason");
+        header("Location: https://service.boostbuddy.ca/payment-details?message=$errorReason");
         exit();
         // return response()->json(array("error" => $errorReason ));
       }
@@ -68,7 +65,7 @@ class OnboardingController extends Controller
 
       if (setcookie("boostbuddy-order", $order, strtotime( '+30 days' ), "/", ".boostbuddy.ca", false, false)) {
         // header("Set-Cookie: boostbuddy-order=58aa0d82b5a34; expires=Sat, 25-Mar-2017 16:42:50 GMT; Max-Age=2588400; path=/");
-        header("Location: http://dev.boostbuddy.ca:9000/api/v0/service/request/$order/validate");
+        header("Location: http://api.boostbuddy.ca/api/v0/service/request/$order/validate");
       } else {
         // could not set cookie
       }
@@ -89,7 +86,7 @@ class OnboardingController extends Controller
     public function validateRequest(Request $request) {
       $order = $_COOKIE['boostbuddy-order'];
       if (isset($order)) {
-        header("Location: http://dev.boostbuddy.ca:3000/status");
+        header("Location: https://service.boostbuddy.ca/status");
         exit();
       } else {
         return response()->json($_COOKIE);
