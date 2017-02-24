@@ -18,12 +18,16 @@ $app->get('/', function () use ($app) {
   return 'oh hai!';
 });
 
+$app->group(['prefix' => 'admin'], function () use ($app) {
+  $app->get('/orders', 'AdminController@showAllServiceRequests');
+  $app->get('/orders/{order}/info', 'AdminController@showServiceRequestInfo');
+});
+
 $app->group(['prefix' => 'api/v0'], function () use ($app) {
   $app->post('/service/request', 'OnboardingController@receiveServiceRequest');
   $app->post('/service/request/{order}/pay', 'OnboardingController@markServiceRequestPaid');
-  $app->get('/service/request/{order}/status', 'OnboardingController@showServiceRequestStatus');
-
   $app->get('/service/request/{order}/validate', 'OnboardingController@validateRequest');
+  $app->get('/service/request/{order}/status', 'OnboardingController@showServiceRequestStatus');
 
   $app->post('/service/request/{order}/review', 'OnboardingController@reviewServiceRequest');
 });
