@@ -30,7 +30,7 @@ class OnboardingController extends Controller
             // TODO: need some more statuses for service requests
             return response()->json($pendingOrder);
         } else {
-            return response()->json(array());
+            return response()->json([]);
         }
     }
 
@@ -44,13 +44,13 @@ class OnboardingController extends Controller
             $token = $request->stripeToken;
 
             try {
-                $charge = Charge::create(array(
+                $charge = Charge::create([
                 "amount" => floatval($quotedPrice * 100),
                 "currency" => "cad",
                 "capture" => false,
                 "description" => "Boostbuddy Order $order",
                 "source" => $token,
-                ));
+                ]);
             } catch (\Stripe\Error\Card $e) {
                 error_log($e);
                 // TODO: redirect to pay screen, with error text in the GET param
@@ -229,7 +229,7 @@ class OnboardingController extends Controller
 
     public function receiveNameAndLocation(Request $request)
     {
-        $jsonResponse = array();
+        $jsonResponse = [];
 
         if (isset($request['name'])) {
             $jsonResponse['name'] = $request->name;
