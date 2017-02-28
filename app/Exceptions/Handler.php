@@ -45,10 +45,10 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-      if($e instanceof \Symfony\Component\Debug\Exception\FatalErrorException) {
-        return response(":/", 500);
-      }
+        if ($e instanceof \Symfony\Component\Debug\Exception\FatalErrorException) {
+            return response(":/", 500);
+        }
 
-      return parent::render($request, $e);
+        return parent::render($request, $e);
     }
 }
