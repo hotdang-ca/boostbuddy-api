@@ -41,8 +41,10 @@
     <!-- Header -->
     <header>
       <div class="container container-main container-fluid">
+        <p><?php echo $provider->name; ?></p>
         <h2>Service Request<br/>Details</h2>
 
+        <!-- TODO: if status is available OR taken by me; otherwise say it's not available. -->
         <div class="boostbuddy-broadcast">
           <div style="margin: 0 auto;">
             <dl class="dl-horizontal">
@@ -70,7 +72,13 @@
                   <dd><p><?php echo $order->destination_label; ?></em></p></dd>
 
                   <dt><p class="small">Tow Distance:</p></dt>
-                  <dd><p><?php echo $order->tow_distance; ?></em></p></dd>
+                  <dd><p><?php echo $order->tow_distance / 1000; ?> km</em></p></dd>
+
+                  <dt><p class="small">Needs Winch:</p></dt>
+                  <dd><p><?php echo $order->needs_winch ? '<strong>YES</strong>' : '<small>No</small>'; ?></em></p></dd>
+
+                  <dt><p class="small">Needs Flatbed:</p></dt>
+                  <dd><p><?php echo $order->needs_flatbed ? '<strong>YES</strong>' : '<small>No</small>'; ?></em></p></dd>
 
                   <?php
                 }
@@ -99,10 +107,16 @@
             </dl>
           </div>
         </div>
-        <div class="row">
-          <button id="submitButton" class="boostbuddy-button" style="width: 80%">Take Service Request</button>
-          <h4>* By clicking Accept job you are responsible<br/>and must complete task</h4>
-        </div>
+        <?php
+          if ($provider->name !== 'admin') {
+            ?>
+            <div class="row">
+              <button id="submitButton" class="boostbuddy-button" style="width: 80%">Take Service Request</button>
+              <h4>* By clicking Accept job, <?php echo $provider->name; ?>, you are responsible<br/>and must complete task</h4>
+            </div>
+            <?php
+          }
+        ?>
       </div>
     </header>
 

@@ -69,7 +69,7 @@
                 foreach ($orders as $order) {
                 ?>
                 <tr>
-                  <td><a href="/admin/orders/<?php echo($order->order_number); ?>/info?token=admin"><?php echo $order->order_number; ?></a></td>
+                  <td><a href="/admin/orders/<?php echo($order->order_number); ?>/info/admin"><?php echo $order->order_number; ?></a></td>
                   <td><?php echo ($order->isPaid ? 'Yes' : 'No'); ?></td>
                   <td><?php echo $order->status; ?></td>
                   <td><?php echo $order->service_type; ?></td>
