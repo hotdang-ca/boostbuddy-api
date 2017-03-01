@@ -43,10 +43,6 @@
       <div class="container container-main container-fluid">
         <h2>Service Request<br/>Details</h2>
 
-        <div class="row">
-          <button id="submitButton" class="boostbuddy-button" style="width: 80%">Take Service Request</button>
-        </div>
-
         <div class="boostbuddy-broadcast">
           <div style="margin: 0 auto;">
             <dl class="dl-horizontal">
@@ -105,6 +101,7 @@
         </div>
         <div class="row">
           <button id="submitButton" class="boostbuddy-button" style="width: 80%">Take Service Request</button>
+          <h4>* By clicking Accept job you are responsible<br/>and must complete task</h4>
         </div>
       </div>
     </header>

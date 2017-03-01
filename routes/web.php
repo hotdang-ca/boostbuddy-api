@@ -21,13 +21,7 @@ Route::get('/', function () {
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/orders', 'AdminController@showAllServiceRequests');
     Route::get('/orders/{order}/info', 'AdminController@showServiceRequestInfo');
-});
 
-Route::group(['prefix' => 'api/v0'], function () {
-    Route::post('/service/request', 'OnboardingController@receiveServiceRequest');
-    Route::post('/service/request/{order}/pay', 'OnboardingController@markServiceRequestPaid');
-    Route::get('/service/request/{order}/validate', 'OnboardingController@validateRequest');
-    Route::get('/service/request/{order}/status', 'OnboardingController@showServiceRequestStatus');
-
-    Route::post('/service/request/{order}/review', 'OnboardingController@reviewServiceRequest');
+    Route::get('/providers', 'ServiceProvidersController@listServiceProviders');
+    Route::get('/providers/{id}/info', 'ServiceProvidersController@providerDetails');
 });
