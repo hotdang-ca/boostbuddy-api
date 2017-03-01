@@ -158,7 +158,7 @@ class OnboardingController extends Controller
             $kms = intval($destinationQuotedDistance) / 1000;
 
             if ($kms > 20) { // its expressed in km
-                $difference = kms - 20;
+                $difference = $kms - 20;
                 $price = $price + ($difference * 2.50);
             }
         } else {
