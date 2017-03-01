@@ -20,7 +20,7 @@ Route::get('/', function () {
 
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/orders', 'AdminController@showAllServiceRequests');
-    Route::get('/orders/{order}/info', 'AdminController@showServiceRequestInfo');
+    Route::get('/orders/{order}/info/{uuid}', 'AdminController@showServiceRequestInfo');
 
     Route::get('/providers', 'ServiceProvidersController@listServiceProviders');
     Route::get('/providers/{id}/info', 'ServiceProvidersController@providerDetails');

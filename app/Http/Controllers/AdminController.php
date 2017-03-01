@@ -26,26 +26,59 @@ class AdminController extends Controller
       return view('allorders', ['orders' => $pendingOrders]);
     }
 
-    public function showServiceRequestInfo(Request $request, $order)
-    {
-        $pendingOrder =   DB::table('servicerequests')
-                            ->where('order_number', $order)
-                            ->first();
+    public function showServiceRequestInfo(Request $request, $order, $uuid) {
+      $provider = new \stdClass();
+
+      if ($uuid !== 'admin') {
+        $provider = DB::table('serviceproviders')
+                    ->where('uuid', $uuid)
+                    ->first();
+        if (!isset($provider)) {
+          return (":/ Not a provider");
+        }
+      } else {
+        $provider->name = 'admin';
+      }
+
+      $pendingOrder = DB::table('servicerequests')
+                          ->where('order_number', $order)
+                          ->first();
       // based on rules, this has an earning potential.
-        $earningPotential = 0;
+
+        $earningPotential = 55;
 
         switch ($pendingOrder->service_type) {
             case 'tow':
-                $earningPotential = 99;
+                $earningPotential += 30; // base
+
+                // plus if winching
+                if (isset($pendingOrder->winching)) {
+                  $earningPotential += 20;
+                }
+
+                // plus if flatbed/dolly is required
+                if (isset($pendingOrder->flatbed)) {
+                  $earningPotential += 20;
+                }
+
+                // plus kms > 15km
+                // it is in meters
+                if ($pendingOrder->tow_distance > 15000) {
+                  $differenceInKm = $pendingOrder->tow_distance - 15000;
+                  $earningPotential += (($differenceInKm / 1000) * 2.5);
+                }
+
                 break;
             case 'fuel':
-                $earningPotential = 10;
+                $earningPotential += 10;
                 break;
+
             default:
                 $earningPotential = 55;
         }
+
         $pendingOrder->earningPotential = $earningPotential;
 
-        return view('orderinfo', ['order' => $pendingOrder]);
+        return view('orderinfo', ['order' => $pendingOrder, 'provider' => $provider]);
     }
 }
