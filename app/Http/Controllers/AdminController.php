@@ -21,10 +21,9 @@ class AdminController extends Controller
         $this->SERVICE_TYPES = ['Boost', 'Tire Change', 'Fuel Delivery', 'Lock-out', 'Tow'];
     }
 
-    public function showAllServiceRequests(Request $request)
-    {
-        $pendingOrders = DB::table('servicerequests')->get();
-        return view('allorders', ['orders' => $pendingOrders]);
+    public function showAllServiceRequests(Request $request) {
+      $pendingOrders = DB::table('servicerequests')->orderBy('updated_at', 'desc')->get();
+      return view('allorders', ['orders' => $pendingOrders]);
     }
 
     public function showServiceRequestInfo(Request $request, $order)
