@@ -23,15 +23,17 @@ class OnboardingController extends Controller
         $this->SERVICE_TYPES = ['Boost', 'Tire Change', 'Fuel Delivery', 'Lock-out', 'Tow'];
     }
 
-    public function showServiceRequestStatus(Request $request, $order)
-    {
-        $pendingOrder = DB::table('servicerequests')->where('order_number', $order)->first();
-        if (isset($pendingOrder)) {
-            // TODO: need some more statuses for service requests
-            return response()->json($pendingOrder);
-        } else {
-            return response()->json([]);
-        }
+    public function showServiceRequestStatus(Request $request, $order) {
+      $pendingOrder = DB::table('servicerequests')->where('order_number', $order)->first();
+      if (isset($pendingOrder)) {
+        // TODO: need some more statuses for service requests
+        // add some more things
+        $pendingOrder->eta = '25-35';
+
+        return response()->json($pendingOrder);
+      } else {
+        return response()->json(array());
+      }
     }
 
     public function markServiceRequestPaid(Request $request, $order)

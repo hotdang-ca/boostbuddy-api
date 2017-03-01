@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 
+require __DIR__.'/bootstrap/autoload.php';
+
 /*
 |--------------------------------------------------------------------------
 | Register The Auto Loader
@@ -26,8 +28,12 @@ $app = require_once __DIR__.'/bootstrap/app.php';
 |
 */
 
-$kernel = $app->make(
-    'Illuminate\Contracts\Console\Kernel'
+$kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+
+$status = $kernel->handle(
+    $input = new Symfony\Component\Console\Input\ArgvInput,
+    new Symfony\Component\Console\Output\ConsoleOutput
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -39,5 +45,6 @@ $kernel = $app->make(
 | down the process. This is the last thing to happen to the request.
 |
 */
+$kernel->terminate($input, $status);
 
-exit($kernel->handle(new ArgvInput, new ConsoleOutput));
+exit($status);
