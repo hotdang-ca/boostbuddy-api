@@ -52,12 +52,12 @@ class AdminController extends Controller
                 $earningPotential += 30; // base
 
                 // plus if winching
-                if (isset($pendingOrder->winching)) {
+                if ($pendingOrder->needs_winch) {
                   $earningPotential += 20;
                 }
 
                 // plus if flatbed/dolly is required
-                if (isset($pendingOrder->flatbed)) {
+                if ($pendingOrder->needs_flatbed) {
                   $earningPotential += 20;
                 }
 
