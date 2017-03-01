@@ -14,8 +14,8 @@ class ServiceStatus extends Migration
     public function up()
     {
         Schema::table('servicerequests', function (Blueprint $table) {
-          $table->string('status')->nullable();
-          $table->string('service_provider')->nullable();
+            $table->string('status')->nullable();
+            $table->string('service_provider')->nullable();
         });
     }
 
@@ -27,8 +27,8 @@ class ServiceStatus extends Migration
     public function down()
     {
         Schema::table('servicerequests', function (Blueprint $table) {
-          $table->dropColumn('status');
-          $table->dropColumn('service_provider');
+            $table->dropColumn('status');
+            $table->dropColumn('service_provider');
         });
     }
 }
