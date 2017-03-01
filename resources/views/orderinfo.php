@@ -74,6 +74,12 @@
                   <dt><p class="small">Tow Distance:</p></dt>
                   <dd><p><?php echo $order->tow_distance / 1000; ?> km</em></p></dd>
 
+                  <dt><p class="small">Needs Winch:</p></dt>
+                  <dd><p><?php echo $order->needs_winch ? '<strong>YES</strong>' : '<small>No</small>'; ?></em></p></dd>
+
+                  <dt><p class="small">Needs Flatbed:</p></dt>
+                  <dd><p><?php echo $order->needs_flatbed ? '<strong>YES</strong>' : '<small>No</small>'; ?></em></p></dd>
+
                   <?php
                 }
               ?>

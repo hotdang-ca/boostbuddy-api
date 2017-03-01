@@ -28,7 +28,7 @@ class OnboardingController extends Controller
       if (isset($pendingOrder)) {
         // TODO: need some more statuses for service requests
         // add some more things
-        $pendingOrder->eta = '25-35';
+        $pendingOrder->eta = 30;
 
         return response()->json($pendingOrder);
       } else {
@@ -77,7 +77,7 @@ class OnboardingController extends Controller
               ->where('order_number', $order)
               ->update(['isPaid' => true]);
 
-	  DB::table('servicerequests')
+	        DB::table('servicerequests')
               ->where('order_number', $order)
               ->update(['status' => 'Paid']);
         }
@@ -89,7 +89,6 @@ class OnboardingController extends Controller
         }
 
         exit();
-
       // return response()->json(array(
       //   "id" => $chargeId,
       //   "networkStatus" => $chargeStatus,
@@ -98,6 +97,7 @@ class OnboardingController extends Controller
       //   "chargeStatus" => $chargeStatus
       // ));
     }
+  }
 
     public function validateRequest(Request $request)
     {
@@ -123,40 +123,20 @@ class OnboardingController extends Controller
         $originLat = $request->origin['lat'];
         $originLng = $request->origin['lng'];
         $originLabel = $request->origin['label'];
-//      $originDescription = $request->origin['description'];
 
       // if it's a tow
         if (strcmp($serviceType, "tow") === 0) {
-            $destinationLat = $request->destination['lat'];
-            $destinationLng = $request->destination['lng'];
-            $destinationLabel = $request->destination['label'];
-    //        $destinationDescription = $request->destination['description'];
-            $destinationQuotedDistance = $request->destination['quoted_distance'];
+          $needsWinch = $request->needs_winch;
+          $needsFlatbed = $request->needs_flatbed;
+
+          $destinationLat = $request->destination['lat'];
+          $destinationLng = $request->destination['lng'];
+          $destinationLabel = $request->destination['label'];
+//        $destinationDescription = $request->destination['description'];
+          $destinationQuotedDistance = $request->destination['quoted_distance'];
         }
 
-      // $jsonResponse = array();
-      // $jsonResponse['firstname'] = $firstname;
-      // $jsonResponse['lastname'] = $lastname;
-      // $jsonResponse['email'] = $email;
-      // $jsonResponse['phone'] = $phone;
-      // $jsonResponse['carDescription'] = $carDescription;
-      // $jsonResponse['serviceType'] = $serviceType;
-      //
-      // $jsonResponse['origin'] = array();
-      // $jsonResponse['origin']['lat'] = $originLat;
-      // $jsonResponse['origin']['lng'] = $originLng;
-      // $jsonResponse['origin']['label'] = $originLabel;
-      // $jsonResponse['origin']['description'] = '';
       // // TODO: is the lat/lng even in the service area?
-      //
-      // if (strcmp($serviceType, "tow") === 0) {
-      //   $jsonResponse['destination'] = array();
-      //   $jsonResponse['destination']['lat'] = $destinationLat;
-      //   $jsonResponse['destination']['lng'] = $destinationLng;
-      //   $jsonResponse['destination']['label'] = $destinationLabel;
-      //   $jsonResponse['destination']['description'] = '';
-      //   $jsonResponse['destination']['quotedDistance'] = $destinationQuotedDistance;
-      // }
 
       // calculate some magic prices
       // Hey Gents I've spent the last 4-5 hours playing around with pricing.
@@ -191,32 +171,35 @@ class OnboardingController extends Controller
         if (strcmp($serviceType, 'tow') === 0) {
             DB::insert(
                 'insert into servicerequests (
-          firstname, lastname, phone, email, car_description, service_type,
-          origin_label, origin_desc, origin_lat, origin_lng,
-          destination_label, destination_desc, destination_lat, destination_lng, tow_distance,
-          quoted_price, order_number, isPaid, created_at, updated_at, status
-        ) values (
-          ?, ?, ?, ?, ?, ?,
-          ?, ?, ?, ?,
-          ?, ?, ?, ?, ?,
-          ?, ?, ?, ?, ?, ?)',
+                  firstname, lastname, phone, email, car_description, service_type,
+                  origin_label, origin_desc, origin_lat, origin_lng,
+                  destination_label, destination_desc, destination_lat, destination_lng, tow_distance,
+                  quoted_price, order_number, isPaid, created_at, updated_at, status,
+                  needs_winch, needs_flatbed
+                ) values (
+                  ?, ?, ?, ?, ?, ?,
+                  ?, ?, ?, ?,
+                  ?, ?, ?, ?, ?,
+                  ?, ?, ?, ?, ?, ?,
+                  ?, ?)',
                 [
                 $firstname, $lastname, $phone, $email, $carDescription, $serviceType,
                 $originLabel, '', $originLat, $originLng,
                 $destinationLabel, '', $destinationLat, $destinationLng, $destinationQuotedDistance,
-                $price, $uuid, false, date('Y-m-d H:i:s'), date('Y-m-d H:i:s'), 'Pending'
+                $price, $uuid, false, date('Y-m-d H:i:s'), date('Y-m-d H:i:s'), 'Pending',
+                $needsWinch, $needsFlatbed
                 ]
             );
         } else {
             DB::insert(
                 'insert into servicerequests (
-          firstname, lastname, phone, email, car_description, service_type,
-          origin_label, origin_desc, origin_lat, origin_lng,
-          quoted_price, order_number, isPaid, created_at, updated_at, status
-        ) values (
-          ?, ?, ?, ?, ?, ?,
-          ?, ?, ?, ?,
-          ?, ?, ?, ?, ?, ?)',
+                  firstname, lastname, phone, email, car_description, service_type,
+                  origin_label, origin_desc, origin_lat, origin_lng,
+                  quoted_price, order_number, isPaid, created_at, updated_at, status
+                ) values (
+                  ?, ?, ?, ?, ?, ?,
+                  ?, ?, ?, ?,
+                  ?, ?, ?, ?, ?, ?)',
                 [
                 $firstname, $lastname, $phone, $email, $carDescription, $serviceType,
                 $originLabel, '', $originLat, $originLng,
