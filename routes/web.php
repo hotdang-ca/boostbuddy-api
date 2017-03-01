@@ -13,21 +13,15 @@ use Illuminate\Http\Response;
 |
 */
 
-$app->get('/', function () use ($app) {
+Route::get('/', function () {
   // TODO: redirect
-  return 'oh hai!';
+    return 'oh hai!';
 });
 
-$app->group(['prefix' => 'admin'], function () use ($app) {
-  $app->get('/orders', 'AdminController@showAllServiceRequests');
-  $app->get('/orders/{order}/info', 'AdminController@showServiceRequestInfo');
-});
+Route::group(['prefix' => 'admin'], function () {
+    Route::get('/orders', 'AdminController@showAllServiceRequests');
+    Route::get('/orders/{order}/info', 'AdminController@showServiceRequestInfo');
 
-$app->group(['prefix' => 'api/v0'], function () use ($app) {
-  $app->post('/service/request', 'OnboardingController@receiveServiceRequest');
-  $app->post('/service/request/{order}/pay', 'OnboardingController@markServiceRequestPaid');
-  $app->get('/service/request/{order}/validate', 'OnboardingController@validateRequest');
-  $app->get('/service/request/{order}/status', 'OnboardingController@showServiceRequestStatus');
-
-  $app->post('/service/request/{order}/review', 'OnboardingController@reviewServiceRequest');
+    Route::get('/providers', 'ServiceProvidersController@listServiceProviders');
+    Route::get('/providers/{id}/info', 'ServiceProvidersController@providerDetails');
 });

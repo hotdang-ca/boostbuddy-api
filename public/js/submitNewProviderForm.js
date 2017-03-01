@@ -3,25 +3,49 @@
  * Assumes jQuery (for animations)
  */
 
-var submitButton = document.getElementById("submitButton");
-hide("completedForm");
+var submitButton = document.getElementById("submit");
 
-submitButton.addEventListener("click", function() {
+submitButton.addEventListener("click", function(e) {
 
   submitButton.innerHTML = "Submitting...";
   disableButton(submitButton);
 
-  var name = document.getElementById("fullname").value;
+  var name = document.getElementById("name").value;
+  var billingname = document.getElementById("billing_name").value;
   var email = document.getElementById("email").value;
-  var useragent = navigator.userAgent;
+  var phone = document.getElementById("phone").value;
+  var address = document.getElementById("address").value;
+  var lat = document.getElementById("lat").value;
+  var lng = document.getElementById("lng").value;
+  var radius = document.getElementById("radius").value;
 
   if (validateEmail(email) && validateName(name)) {
-    var params = "name=" + name + "&email=" + email + "&useragent=" + useragent;
-    makePost(params, "mail/contact.php");
-    document.getElementById("formName").innerHTML = name;
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("POST", "/api/v0/providers/add");
+    xmlhttp.setRequestHeader('Content-Type', 'application/json');
+
+    xmlhttp.onreadystatechange = function() {
+      if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+        submitButton.innerHTML = "Got it!";
+        setTimeout(function() {
+          location.reload();
+        }, 1000);
+      }
+    };
+
+    xmlhttp.send(JSON.stringify(
+      {
+        name: name,
+        billing_name: billingname,
+        email: email,
+        phone: phone,
+        address: address,
+        lat: lat,
+        lng: lng,
+        radius: radius
+      }
+    ));
   } else {
-    alert("Bad email or name");
-    submitButton.innerHTML = "Try again";
     enableButton(submitButton);
   }
 });
