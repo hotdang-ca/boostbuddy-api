@@ -36,54 +36,54 @@ class OnboardingController extends Controller
       }
     }
 
-    public function markServiceRequestPaid(Request $request, $order)
-    {
-        $pendingOrder = DB::table('servicerequests')->where('order_number', $order)->first();
-        if (isset($pendingOrder)) {
-            $isPaid = $pendingOrder->isPaid;
-            $quotedPrice = $pendingOrder->quoted_price;
-            Stripe::setApiKey("sk_test_syNOkivWAVuWiTqUOyVCdlUw");
-            $token = $request->stripeToken;
+    public function markServiceRequestPaid(Request $request, $order) {
+      $pendingOrder = DB::table('servicerequests')->where('order_number', $order)->first();
+      if (isset($pendingOrder)) {
 
-            try {
-                $charge = Charge::create([
-                "amount" => floatval($quotedPrice * 100),
-                "currency" => "cad",
-                "capture" => false,
-                "description" => "Boostbuddy Order $order",
-                "source" => $token,
-                ]);
-            } catch (\Stripe\Error\Card $e) {
-                error_log($e);
-                // TODO: redirect to pay screen, with error text in the GET param
-                $errorReason = $e->jsonBody['error']['message'];
-                header("Location: https://service.boostbuddy.ca/payment-details?message=$errorReason");
-                exit();
-                // return response()->json(array("error" => $errorReason ));
-            }
+        $isPaid = $pendingOrder->isPaid;
+        $quotedPrice = $pendingOrder->quoted_price;
+        Stripe::setApiKey("sk_test_syNOkivWAVuWiTqUOyVCdlUw");
+        $token = $request->stripeToken;
 
-            error_log($charge);
+        try {
+          $charge = Charge::create(array(
+            "amount" => floatval($quotedPrice * 100),
+            "currency" => "cad",
+            "capture" => false,
+            "description" => "Boostbuddy Order $order",
+            "source" => $token,
+          ));
+        } catch (\Stripe\Error\Card $e) {
+          error_log($e);
+          // TODO: redirect to pay screen, with error text in the GET param
+          $errorReason = $e->jsonBody['error']['message'];
+          header("Location: https://service.boostbuddy.ca/payment-details?message=$errorReason");
+          exit();
+          // return response()->json(array("error" => $errorReason ));
+        }
 
-            // is paid?
-            $chargeId = $charge['id'];
-            $networkStatus = $charge['outcome']['network_status'];
-            $chargeType = $charge['outcome']['type'];
-            $hasBeenPaid = $charge['paid'];
-            $chargeStatus = $charge['status'];
+//        error_log($charge);
 
-            if ($hasBeenPaid) {
-                // not paid.. just authorized... but that's still important
-                DB::table('servicerequests')
-                  ->where('order_number', $order)
-                  ->update(['isPaid' => true])
-                  ->update(['status' => 'paid']);
-            }
+        // is paid?
+  //      $chargeId = $charge['id'];
+  //      $networkStatus = $charge['outcome']['network_status'];
+  //      $chargeType = $charge['outcome']['type'];
+        $hasBeenPaid = $charge['paid'];
+  //      $chargeStatus = $charge['status'];
 
-            if (setcookie("boostbuddy-order", $order, strtotime('+30 days'), "/", ".boostbuddy.ca", false, false)) {
-                header("Location: http://api.boostbuddy.ca/api/v0/service/request/$order/validate");
-            } else {
-                // could not set cookie
-            }
+        if ($hasBeenPaid) {
+          // not paid.. just authorized... but that's still important
+          DB::table('servicerequests')
+              ->where('order_number', $order)
+              ->update(['isPaid' => true]);
+
+	  DB::table('servicerequests')
+              ->where('order_number', $order)
+              ->update(['status' => 'Paid']);
+        }
+
+        if (setcookie("boostbuddy-order", $order, strtotime( '+30 days' ), "/", ".boostbuddy.ca", false, false)) {
+          header("Location: http://api.boostbuddy.ca/api/v0/service/request/$order/validate");
         } else {
             // no such order
         }

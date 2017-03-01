@@ -168,7 +168,7 @@
     <link href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
 
     <!-- Map Picker -->
-    <script src="http://maps.google.com/maps/api/js?key=***REMOVED***&libraries=places"></script>
+    <script src="//maps.google.com/maps/api/js?key=***REMOVED***&libraries=places"></script>
     <script src="/js/locationpicker.jquery.js"></script>
 
     <!-- Datatables -->
