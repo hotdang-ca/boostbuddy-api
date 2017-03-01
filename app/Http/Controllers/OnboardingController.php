@@ -59,21 +59,24 @@ class OnboardingController extends Controller
           // return response()->json(array("error" => $errorReason ));
         }
 
-        error_log($charge);
+//        error_log($charge);
 
         // is paid?
-        $chargeId = $charge['id'];
-        $networkStatus = $charge['outcome']['network_status'];
-        $chargeType = $charge['outcome']['type'];
+  //      $chargeId = $charge['id'];
+  //      $networkStatus = $charge['outcome']['network_status'];
+  //      $chargeType = $charge['outcome']['type'];
         $hasBeenPaid = $charge['paid'];
-        $chargeStatus = $charge['status'];
+  //      $chargeStatus = $charge['status'];
 
         if ($hasBeenPaid) {
           // not paid.. just authorized... but that's still important
           DB::table('servicerequests')
               ->where('order_number', $order)
-              ->update(['isPaid' => true])
-              ->update(['status' => 'paid']);
+              ->update(['isPaid' => true]);
+
+	  DB::table('servicerequests')
+              ->where('order_number', $order)
+              ->update(['status' => 'Paid']);
         }
 
         if (setcookie("boostbuddy-order", $order, strtotime( '+30 days' ), "/", ".boostbuddy.ca", false, false)) {

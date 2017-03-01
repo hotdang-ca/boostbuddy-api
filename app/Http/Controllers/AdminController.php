@@ -22,7 +22,7 @@ class AdminController extends Controller
     }
 
     public function showAllServiceRequests(Request $request) {
-      $pendingOrders = DB::table('servicerequests')->get();
+      $pendingOrders = DB::table('servicerequests')->orderBy('updated_at', 'desc')->get();
       return view('allorders', ['orders' => $pendingOrders]);
     }
 
