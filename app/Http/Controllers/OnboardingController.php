@@ -75,11 +75,14 @@ class OnboardingController extends Controller
           // not paid.. just authorized... but that's still important
           DB::table('servicerequests')
               ->where('order_number', $order)
-              ->update(['isPaid' => true]);
-
-	        DB::table('servicerequests')
-              ->where('order_number', $order)
-              ->update(['status' => 'Paid']);
+              ->update(
+              [
+                'isPaid' => true,
+                'status' => 'Paid',
+                'status_code' => 1
+              ]
+            );
+              // TODO: send an email to announce that it's paid...
         }
 
         if (setcookie("boostbuddy-order", $order, strtotime( '+30 days' ), "/", ".boostbuddy.ca", false, false)) {
