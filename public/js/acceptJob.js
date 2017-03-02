@@ -15,13 +15,41 @@ element.addEventListener('input', function() {
 }, false);
 
 function updateStatus(statusType) {
+  var url = '/api/v0/service/request/' + order + '/update';
+  // 5: Finished
+  // 6: GOA
+  // 7: Customer cancelled
+  var statusCode = 0;
+
   if (statusType === 'goa') {
     console.log('marking Gone On Arrival');
+    statusCode = 6;
   } else if (statusType === 'complete') {
     console.log('marking Finished');
+    statusCode = 5;
   } else if (statusType === 'cancel') {
     console.log('marking Cancelled.');
+    statusCode = 2;
   }
+
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("POST", url);
+  xmlhttp.setRequestHeader('Content-Type', 'application/json');
+  xmlhttp.onreadystatechange = function() {
+    if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+      setTimeout(function() {
+        location.reload();
+      }, 1000);
+    }
+  };
+
+  xmlhttp.send(JSON.stringify(
+    {
+      provider: uuid,
+      code: statusCode
+    }
+  ));
+
 }
 
 function acceptJob() {
