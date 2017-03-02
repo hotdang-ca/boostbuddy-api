@@ -151,6 +151,8 @@ class OnboardingController extends Controller
       // Basis is providers earn 85% revenue on flat fees and 80% on variable rates.
       // Providers choose the radius they are willing to service for at these standard
       // price points.
+
+// customer price
         $price = 0;
 
         if (strcmp($serviceType, 'tow') === 0) {
@@ -166,6 +168,36 @@ class OnboardingController extends Controller
         }
 
         $uuid = uniqid();
+// provider earnings
+
+        $earningPotential = 55;
+
+        switch ($serviceType) {
+            case 'tow':
+                $earningPotential += 30; // base
+
+                // plus if winching
+                if ($needsWinch) {
+                  $earningPotential += 20;
+                } else if ($needsFlatbed) {
+                  $earningPotential += 20;
+                )
+
+                // plus kms > 15km
+                // it is in meters
+                if ($destinationQuotedDistance > 15000) {
+                  $differenceInKm = $destinationQuotedDistance - 15000;
+                  $earningPotential += (($differenceInKm / 1000) * 2.5);
+                }
+
+                break;
+            case 'fuel':
+                $earningPotential += 10;
+                break;
+
+            default:
+                $earningPotential = 55;
+        }
 
       // we have everything we need... let's store it.
         if (strcmp($serviceType, 'tow') === 0) {

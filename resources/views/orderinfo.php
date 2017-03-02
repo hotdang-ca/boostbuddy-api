@@ -135,16 +135,28 @@
               <?php
             } else if ($order->service_provider == $provider->name) {
               // not pending/paid/announced and we took it
-              ?>
-                <div class="row">
-                  <h4>This job is your responsibility now.</h4>
-                  <input type="hidden" id="uuid" value="<?php echo $provider->uuid; ?>" />
-                  <input type="hidden" id="order" value="<?php echo $order->order_number; ?>" />
-                  <button onClick="updateStatus('complete');" id="finishedButton" class="boostbuddy-button" style="width: 80%;">Mark Job Complete</button> <br><br>
-                  <button onClick="updateStatus('goa');" id="goaButton" class="boostbuddy-button" style="width: 60%; opacity: 0.80"><small>Mark Job GOA</small></button><br><br>
-                  <button onClick="updateStatus('cancel');" id="failButton" class="boostbuddy-button" style="width: 60%; opacity: 0.80"><small>Relinquish Service Request</small></button>
-                </div>
-              <?php
+
+              if ($order->service_code > 4) {
+                ?>
+                  <div class="row">
+                    <h4>Right on!</h4>
+                    <p>The job has been marked complete. Ypu will be paid 5-7 Business Days.</p>
+                    <p>Record your order number: <strong><?php echo $order->order_number; ?></strong> and quoted pay: <strong><?php echo $order->earningPotential ?></strong></p>
+                  </div>
+                <?php
+              } else {
+                ?>
+                  <div class="row">
+                    <h4>This job is your responsibility now.</h4>
+                    <input type="hidden" id="uuid" value="<?php echo $provider->uuid; ?>" />
+                    <input type="hidden" id="order" value="<?php echo $order->order_number; ?>" />
+                    <button onClick="updateStatus('complete');" id="finishedButton" class="boostbuddy-button" style="width: 80%;">Mark Job Complete</button> <br><br>
+                    <button onClick="updateStatus('goa');" id="goaButton" class="boostbuddy-button" style="width: 60%; opacity: 0.80"><small>Mark Job GOA</small></button><br><br>
+                    <button onClick="updateStatus('cancel');" id="failButton" class="boostbuddy-button" style="width: 60%; opacity: 0.80"><small>Relinquish Service Request</small></button>
+                  </div>
+                <?php
+              }
+
             } else {
               // someone else took it
               ?>
