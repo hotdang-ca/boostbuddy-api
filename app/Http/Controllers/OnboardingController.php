@@ -181,7 +181,7 @@ class OnboardingController extends Controller
                   $earningPotential += 20;
                 } else if ($needsFlatbed) {
                   $earningPotential += 20;
-                )
+                }
 
                 // plus kms > 15km
                 // it is in meters
