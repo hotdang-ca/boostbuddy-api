@@ -26,10 +26,6 @@ class OnboardingController extends Controller
     public function showServiceRequestStatus(Request $request, $order) {
       $pendingOrder = DB::table('servicerequests')->where('order_number', $order)->first();
       if (isset($pendingOrder)) {
-        // TODO: need some more statuses for service requests
-        // add some more things
-        $pendingOrder->eta = 30;
-
         return response()->json($pendingOrder);
       } else {
         return response()->json(array());
