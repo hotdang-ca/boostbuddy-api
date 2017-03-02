@@ -91,7 +91,14 @@
 
               <tr>
                 <dt><p class="small">Customer Number:</p></dt>
-                <dd><p><?php echo $order->phone ?></em></p></dd>
+                <dd><p>
+                  <?php
+                  if ( $order->service_provider == $provider->name || !isset($order->service_provider) ) {
+                    echo $order->phone;
+                  } else {
+                    echo '<em>Omitted</em>';
+                  }
+                  ?></p></dd>
               </tr>
 
               <tr>
@@ -109,13 +116,37 @@
         </div>
         <?php
           if ($provider->name !== 'admin') {
-            ?>
-            <div class="row">
-              <button id="submitButton" class="boostbuddy-button" style="width: 80%">Take Service Request</button>
-              <h4>* By clicking Accept job, <?php echo $provider->name; ?>, you are responsible<br/>and must complete task</h4>
-            </div>
-            <?php
+            if ($order->status_code == 1) {
+              ?>
+              <div class="row">
+                <h4 id="acknowledgementText">* By accepting the job, <?php echo $provider->name; ?>, you are responsible<br/>and must complete task</h4>
+                <input style="display: block; height: 64px; width: 80%; margin: 0 auto; background-color: #2b2b2b; font-size: 24px; text-align: center; font-family: Roboto" id="eta" name="eta" type="number" placeholder="ETA in minutes (eg, 30)" /><br/>
+                <input type="hidden" id="uuid" value="<?php echo $provider->uuid; ?>" />
+                <input type="hidden" id="order" value="<?php echo $order->order_number; ?>" />
+                <button onClick="acceptJob();" id="submitButton" class="boostbuddy-button" style="width: 80%; opacity: 0.5" disabled>I understand.<br>Accept the job</button>
+              </div>
+              <?php
+            } else if ($order->service_provider == $provider->name) {
+              // we took it
+              ?>
+                <div class="row">
+                  <h4>This job is your responsibility now.</h4>
+                  <button onClick="updateStatus('complete');" id="finishedButton" class="boostbuddy-button" style="width: 80%;">Mark Job Complete</button> <br><br>
+                  <button onClick="updateStatus('goa');" id="goaButton" class="boostbuddy-button" style="width: 60%; opacity: 0.80"><small>Mark Job GOA</small></button><br><br>
+                  <button onClick="updateStatus('cancel');" id="failButton" class="boostbuddy-button" style="width: 60%; opacity: 0.80"><small>Relinquish Service Request</small></button>
+                </div>
+              <?php
+            } else {
+              // someone else took it
+              ?>
+                <div class="row">
+                <h4>This job is no longer available.</h4>
+                <p>The other service provider may relinquish the job... you could try <a href="">refreshing the page</a></p>
+                </div>
+              <?php
+            }
           }
+          // else, show nothing. We are ADMIN.
         ?>
       </div>
     </header>
@@ -142,8 +173,7 @@
     <!-- Plugin JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
 
-    <!-- Contact Form JavaScript -->
-    <script src="/js/submitForm.js"></script>
+    <script src="/js/acceptJob.js"></script>
 
     <!-- Theme JavaScript -->
     <script src="/js/freelancer.min.js"></script>
