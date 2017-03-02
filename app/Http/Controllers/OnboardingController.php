@@ -207,19 +207,19 @@ class OnboardingController extends Controller
                   origin_label, origin_desc, origin_lat, origin_lng,
                   destination_label, destination_desc, destination_lat, destination_lng, tow_distance,
                   quoted_price, order_number, isPaid, created_at, updated_at, status,
-                  needs_winch, needs_flatbed
+                  needs_winch, needs_flatbed, earning_potential
                 ) values (
                   ?, ?, ?, ?, ?, ?,
                   ?, ?, ?, ?,
                   ?, ?, ?, ?, ?,
                   ?, ?, ?, ?, ?, ?,
-                  ?, ?)',
+                  ?, ?, ?)',
                 [
                 $firstname, $lastname, $phone, $email, $carDescription, $serviceType,
                 $originLabel, '', $originLat, $originLng,
                 $destinationLabel, '', $destinationLat, $destinationLng, $destinationQuotedDistance,
                 $price, $uuid, false, date('Y-m-d H:i:s'), date('Y-m-d H:i:s'), 'Pending',
-                $needsWinch, $needsFlatbed
+                $needsWinch, $needsFlatbed, $earningPotential
                 ]
             );
         } else {
@@ -227,15 +227,15 @@ class OnboardingController extends Controller
                 'insert into servicerequests (
                   firstname, lastname, phone, email, car_description, service_type,
                   origin_label, origin_desc, origin_lat, origin_lng,
-                  quoted_price, order_number, isPaid, created_at, updated_at, status
+                  quoted_price, order_number, isPaid, created_at, updated_at, status, earning_potential
                 ) values (
                   ?, ?, ?, ?, ?, ?,
                   ?, ?, ?, ?,
-                  ?, ?, ?, ?, ?, ?)',
+                  ?, ?, ?, ?, ?, ?, ?)',
                 [
                 $firstname, $lastname, $phone, $email, $carDescription, $serviceType,
                 $originLabel, '', $originLat, $originLng,
-                $price, $uuid, false, date('Y-m-d H:i:s'), date('Y-m-d H:i:s'), 'Pending'
+                $price, $uuid, false, date('Y-m-d H:i:s'), date('Y-m-d H:i:s'), 'Pending', $earningPotential
                 ]
             );
         }
