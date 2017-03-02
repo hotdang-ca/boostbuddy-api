@@ -136,7 +136,7 @@
             } else if ($order->service_provider == $provider->name) {
               // not pending/paid/announced and we took it
 
-              if ($order->service_code > 4) {
+              if ($order->status_code > 4) {
                 ?>
                   <div class="row">
                     <h4>Right on!</h4>
