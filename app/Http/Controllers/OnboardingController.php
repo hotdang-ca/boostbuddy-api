@@ -79,10 +79,11 @@ class OnboardingController extends Controller
               [
                 'isPaid' => true,
                 'status' => 'Paid',
-                'status_code' => 1
+                'status_code' => 2
               ]
             );
-              // TODO: send an email to announce that it's paid...
+              // TODO: send an email to announce that it's paid... and set status code to 3
+
         }
 
         if (setcookie("boostbuddy-order", $order, strtotime( '+30 days' ), "/", ".boostbuddy.ca", false, false)) {

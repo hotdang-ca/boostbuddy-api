@@ -42,7 +42,7 @@ function acceptJob() {
     if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
       var orderStatus = JSON.parse(xmlhttp.responseText);
 
-      if (orderStatus.status_code === 2) {
+      if (orderStatus.status_code === 3) {
         // we got it!
       }
 

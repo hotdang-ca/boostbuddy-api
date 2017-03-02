@@ -116,7 +116,7 @@
         </div>
         <?php
           if ($provider->name !== 'admin') {
-            if ($order->status_code == 1) {
+            if ($order->status_code < 3) { // if it's pending, paid, or announced
               ?>
               <div class="row">
                 <h4 id="acknowledgementText">* By accepting the job, <?php echo $provider->name; ?>, you are responsible<br/>and must complete task</h4>
@@ -127,7 +127,7 @@
               </div>
               <?php
             } else if ($order->service_provider == $provider->name) {
-              // we took it
+              // not pending/paid/announced and we took it
               ?>
                 <div class="row">
                   <h4>This job is your responsibility now.</h4>
@@ -146,7 +146,7 @@
               <?php
             }
           }
-          // else, show nothing. We are ADMIN.
+          // else, show nothing. Eg, we are ADMIN.
         ?>
       </div>
     </header>
