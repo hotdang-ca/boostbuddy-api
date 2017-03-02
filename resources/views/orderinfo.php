@@ -139,9 +139,9 @@
               if ($order->status_code > 4) {
                 ?>
                   <div class="row">
-                    <h4>Right on!</h4>
-                    <p>The job has been marked complete. Ypu will be paid 5-7 Business Days.</p>
-                    <p>Record your order number: <strong><?php echo $order->order_number; ?></strong> and quoted pay: <strong><?php echo $order->earning_potential ?></strong></p>
+                    <h3>Right on!</h3>
+                    <p>The job has been marked complete. You will be paid in 5-7 Business Days.</p>
+                    <p>Record your order number: <strong><?php echo $order->order_number; ?></strong> and quoted pay: $<strong><?php echo $order->earning_potential ?></strong></p>
                   </div>
                 <?php
               } else {
