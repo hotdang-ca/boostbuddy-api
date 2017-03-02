@@ -120,9 +120,16 @@
               ?>
               <div class="row">
                 <h4 id="acknowledgementText">* By accepting the job, <?php echo $provider->name; ?>, you are responsible<br/>and must complete task</h4>
-                <input style="display: block; height: 64px; width: 80%; margin: 0 auto; background-color: #2b2b2b; font-size: 24px; text-align: center; font-family: Roboto" id="eta" name="eta" type="number" placeholder="ETA in minutes (eg, 30)" /><br/>
+                <?php
+                if ($order->status_code < 2) {
+                ?>
+                  <p><strong>Note:</strong> This order is not yet paid. This means you may not be paid for the service provided.</p>
+                <?php
+                }
+                ?>
                 <input type="hidden" id="uuid" value="<?php echo $provider->uuid; ?>" />
                 <input type="hidden" id="order" value="<?php echo $order->order_number; ?>" />
+                <input style="display: block; height: 64px; width: 80%; margin: 0 auto; background-color: #2b2b2b; font-size: 24px; text-align: center; font-family: Roboto" id="eta" name="eta" type="number" placeholder="ETA in minutes (eg, 30)" /><br/>
                 <button onClick="acceptJob();" id="submitButton" class="boostbuddy-button" style="width: 80%; opacity: 0.5" disabled>I understand.<br>Accept the job</button>
               </div>
               <?php
@@ -131,6 +138,8 @@
               ?>
                 <div class="row">
                   <h4>This job is your responsibility now.</h4>
+                  <input type="hidden" id="uuid" value="<?php echo $provider->uuid; ?>" />
+                  <input type="hidden" id="order" value="<?php echo $order->order_number; ?>" />
                   <button onClick="updateStatus('complete');" id="finishedButton" class="boostbuddy-button" style="width: 80%;">Mark Job Complete</button> <br><br>
                   <button onClick="updateStatus('goa');" id="goaButton" class="boostbuddy-button" style="width: 60%; opacity: 0.80"><small>Mark Job GOA</small></button><br><br>
                   <button onClick="updateStatus('cancel');" id="failButton" class="boostbuddy-button" style="width: 60%; opacity: 0.80"><small>Relinquish Service Request</small></button>
