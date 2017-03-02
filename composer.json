@@ -16,7 +16,8 @@
         "doctrine/dbal": "^2.5",
         "symfony/dependency-injection": "^3.2",
         "symfony/class-loader": "^3.2",
-        "symfony/config": "^3.2"
+        "symfony/config": "^3.2",
+        "barryvdh/laravel-cors": "^0.8.6"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
