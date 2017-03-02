@@ -78,7 +78,7 @@ class ServiceProvidersApiController extends Controller
             ->update(
             [
               'status_code' => 3,
-              'status' => 'Provider acknowledged',
+              'status' => 'On The Way',
               'service_provider' => $serviceProvider->name,
               'eta' => $request->eta
             ]
@@ -86,7 +86,7 @@ class ServiceProvidersApiController extends Controller
 
           return response()->json(array(
             [
-              'status' => 'Provider acknowledged',
+              'status' => 'On The Way',
               'status_code' => 3
             ]
           ));
@@ -103,7 +103,62 @@ class ServiceProvidersApiController extends Controller
       }
     }
 
-    public function setJobStatus(Request $request, $order) {
+    public function updateJob(Request $request, $order) {
+      // job statuses:
+      // 0. Pending -- when it's first created
+      // 1. Paid -- set when the service is marked as paid
+      // 2. Looking for best provider -- set when the email goes out to providers
 
+      // 3. Provider acknowledged -- set when a provider accepts the job; eta should be specific at this point
+
+      // 4. Provider arrived -- set when a provider indicates they arrived... optional
+
+      // 5. Provider reported done -- set when the provider marks the job complete
+      // 6. Provider reported Gone On Arrival -- set when provider arrives but customer isn't there.
+
+      // 7. Customer cancelled -- set if the customer somehow cancelled the request
+
+      $providers = DB::select("SELECT * FROM serviceproviders WHERE uuid = '$request->provider' LIMIT 1");
+      $serviceRequests = DB::select("SELECT * FROM servicerequests WHERE order_number = '$order' LIMIT 1");
+
+      $serviceRequest = $serviceRequests[0];
+      $serviceProvider = $providers[0];
+
+      if ( isset($serviceRequest) && isset($serviceProvider) ) {
+        $status = $serviceRequest->status;
+        $statusCode = $serviceRequest->status_code;
+        $newStatusCode = $request->code;
+        $statusText = "";
+        $serviceProvider = $serviceProvider->name;
+
+        if ($newStatusCode == 5) {
+          $statusText = "Completed";
+        } else if ($newStatusCode == 6) {
+          $statusText = "Provider marked Gone On Arrival";
+        } else if ($newStatusCode == 7) {
+          $statusText = "Provider cancelled the request.";
+        } else if ($newStatusCode == 2) {
+          // relinquish
+          $statusText = "Finding another service provider";
+          $serviceProvider = "";
+        }
+
+        DB::table('servicerequests')
+          ->where('order_number', $order)
+          ->update(
+          [
+            'status_code' => $newStatusCode,
+            'status' => $statusText,
+            'service_provider' => $serviceProvider
+          ]
+        );
+
+        return response()->json(array(
+          [
+            'status_code' => $newStatusCode,
+            'status' => $statusText,
+          ]
+        ));
+      }
     }
 }
