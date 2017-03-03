@@ -108,7 +108,7 @@
 
               <tr>
                 <dt><p class="small"><big>This Job Pays:</big></p></dt>
-                <dd><p><big>$<?php echo $order->earningPotential ?></em></big></p></dd>
+                <dd><p><big>$<?php echo $order->earning_potential ?></em></big></p></dd>
               </tr>
 
             </dl>
@@ -116,7 +116,7 @@
         </div>
         <?php
           if ($provider->name !== 'admin') {
-            if ($order->status_code == 1) {
+            if ($order->status_code < 3) { // if it's pending, paid, or announced
               ?>
               <div class="row">
                 <h4 id="acknowledgementText">* By accepting the job, <?php echo $provider->name; ?>, you are responsible<br/>and must complete task</h4>
@@ -134,17 +134,29 @@
               </div>
               <?php
             } else if ($order->service_provider == $provider->name) {
-              // we took it
-              ?>
-                <div class="row">
-                  <h4>This job is your responsibility now.</h4>
-                  <input type="hidden" id="uuid" value="<?php echo $provider->uuid; ?>" />
-                  <input type="hidden" id="order" value="<?php echo $order->order_number; ?>" />
-                  <button onClick="updateStatus('complete');" id="finishedButton" class="boostbuddy-button" style="width: 80%;">Mark Job Complete</button> <br><br>
-                  <button onClick="updateStatus('goa');" id="goaButton" class="boostbuddy-button" style="width: 60%; opacity: 0.80"><small>Mark Job GOA</small></button><br><br>
-                  <button onClick="updateStatus('cancel');" id="failButton" class="boostbuddy-button" style="width: 60%; opacity: 0.80"><small>Relinquish Service Request</small></button>
-                </div>
-              <?php
+              // not pending/paid/announced and we took it
+
+              if ($order->status_code > 4) {
+                ?>
+                  <div class="row">
+                    <h3>Right on!</h3>
+                    <p>The job has been marked complete. You will be paid in 5-7 Business Days.</p>
+                    <p>Record your order number: <strong><?php echo $order->order_number; ?></strong> and quoted pay: $<strong><?php echo $order->earning_potential ?></strong></p>
+                  </div>
+                <?php
+              } else {
+                ?>
+                  <div class="row">
+                    <h4>This job is your responsibility now.</h4>
+                    <input type="hidden" id="uuid" value="<?php echo $provider->uuid; ?>" />
+                    <input type="hidden" id="order" value="<?php echo $order->order_number; ?>" />
+                    <button onClick="updateStatus('complete');" id="finishedButton" class="boostbuddy-button" style="width: 80%;">Mark Job Complete</button> <br><br>
+                    <button onClick="updateStatus('goa');" id="goaButton" class="boostbuddy-button" style="width: 60%; opacity: 0.80"><small>Mark Job GOA</small></button><br><br>
+                    <button onClick="updateStatus('cancel');" id="failButton" class="boostbuddy-button" style="width: 60%; opacity: 0.80"><small>Relinquish Service Request</small></button>
+                  </div>
+                <?php
+              }
+
             } else {
               // someone else took it
               ?>
@@ -155,7 +167,7 @@
               <?php
             }
           }
-          // else, show nothing. We are ADMIN.
+          // else, show nothing. Eg, we are ADMIN.
         ?>
       </div>
     </header>

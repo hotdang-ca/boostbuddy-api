@@ -26,10 +26,6 @@ class OnboardingController extends Controller
     public function showServiceRequestStatus(Request $request, $order) {
       $pendingOrder = DB::table('servicerequests')->where('order_number', $order)->first();
       if (isset($pendingOrder)) {
-        // TODO: need some more statuses for service requests
-        // add some more things
-        $pendingOrder->eta = 30;
-
         return response()->json($pendingOrder);
       } else {
         return response()->json(array());
@@ -75,11 +71,15 @@ class OnboardingController extends Controller
           // not paid.. just authorized... but that's still important
           DB::table('servicerequests')
               ->where('order_number', $order)
-              ->update(['isPaid' => true]);
+              ->update(
+              [
+                'isPaid' => true,
+                'status' => 'Paid',
+                'status_code' => 2
+              ]
+            );
+              // TODO: send an email to announce that it's paid... and set status code to 3
 
-	        DB::table('servicerequests')
-              ->where('order_number', $order)
-              ->update(['status' => 'Paid']);
         }
 
         if (setcookie("boostbuddy-order", $order, strtotime( '+30 days' ), "/", ".boostbuddy.ca", false, false)) {
@@ -124,15 +124,17 @@ class OnboardingController extends Controller
         $originLng = $request->origin['lng'];
         $originLabel = $request->origin['label'];
 
+        $uuid = uniqid();
+        $needsWinch = false;
+        $needsFlatbed = false;
       // if it's a tow
-        if (strcmp($serviceType, "tow") === 0) {
+        if (strcmp($serviceType, 'tow') == 0) {
           $needsWinch = $request->needs_winch;
           $needsFlatbed = $request->needs_flatbed;
 
           $destinationLat = $request->destination['lat'];
           $destinationLng = $request->destination['lng'];
           $destinationLabel = $request->destination['label'];
-//        $destinationDescription = $request->destination['description'];
           $destinationQuotedDistance = $request->destination['quoted_distance'];
         }
 
@@ -151,21 +153,57 @@ class OnboardingController extends Controller
       // Basis is providers earn 85% revenue on flat fees and 80% on variable rates.
       // Providers choose the radius they are willing to service for at these standard
       // price points.
-        $price = 0;
 
-        if (strcmp($serviceType, 'tow') === 0) {
-            $price = 99;
+
+
+// CUSTOMER PRICE
+        $price = 65;
+
+        if (strcmp($serviceType, 'tow') == 0) {
+            $price += 34;
+
             $kms = intval($destinationQuotedDistance) / 1000;
-
-            if ($kms > 20) { // its expressed in km
-                $difference = $kms - 20;
-                $price = $price + ($difference * 2.50);
+            if ($kms > 15) { // its expressed in km
+                $difference = $kms - 15;
+                $price += ($difference * 3.00);
             }
-        } else {
-            $price = 65;
+            if ($needsWinch || $needsFlatbed) {
+              $price += 25;
+            }
+
+        } else if (strcmp($serviceType, 'fuel') == 0) {
+          $price += 10;
         }
 
-        $uuid = uniqid();
+// PROVIDER EARNING
+        $earningPotential = 55;
+
+        switch ($serviceType) {
+            case 'tow':
+                $earningPotential += 30; // base
+
+                // plus if winching
+                if ($needsWinch) {
+                  $earningPotential += 20;
+                } else if ($needsFlatbed) {
+                  $earningPotential += 20;
+                }
+
+                // plus kms > 15km
+                // it is in meters
+                if ($destinationQuotedDistance > 15000) {
+                  $differenceInKm = $destinationQuotedDistance - 15000;
+                  $earningPotential += (($differenceInKm / 1000) * 2.5);
+                }
+
+                break;
+            case 'fuel':
+                $earningPotential += 10;
+                break;
+
+            default:
+                $earningPotential = 55;
+        }
 
       // we have everything we need... let's store it.
         if (strcmp($serviceType, 'tow') === 0) {
@@ -175,19 +213,19 @@ class OnboardingController extends Controller
                   origin_label, origin_desc, origin_lat, origin_lng,
                   destination_label, destination_desc, destination_lat, destination_lng, tow_distance,
                   quoted_price, order_number, isPaid, created_at, updated_at, status,
-                  needs_winch, needs_flatbed
+                  needs_winch, needs_flatbed, earning_potential
                 ) values (
                   ?, ?, ?, ?, ?, ?,
                   ?, ?, ?, ?,
                   ?, ?, ?, ?, ?,
                   ?, ?, ?, ?, ?, ?,
-                  ?, ?)',
+                  ?, ?, ?)',
                 [
                 $firstname, $lastname, $phone, $email, $carDescription, $serviceType,
                 $originLabel, '', $originLat, $originLng,
                 $destinationLabel, '', $destinationLat, $destinationLng, $destinationQuotedDistance,
                 $price, $uuid, false, date('Y-m-d H:i:s'), date('Y-m-d H:i:s'), 'Pending',
-                $needsWinch, $needsFlatbed
+                $needsWinch, $needsFlatbed, $earningPotential
                 ]
             );
         } else {
@@ -195,15 +233,15 @@ class OnboardingController extends Controller
                 'insert into servicerequests (
                   firstname, lastname, phone, email, car_description, service_type,
                   origin_label, origin_desc, origin_lat, origin_lng,
-                  quoted_price, order_number, isPaid, created_at, updated_at, status
+                  quoted_price, order_number, isPaid, created_at, updated_at, status, earning_potential
                 ) values (
                   ?, ?, ?, ?, ?, ?,
                   ?, ?, ?, ?,
-                  ?, ?, ?, ?, ?, ?)',
+                  ?, ?, ?, ?, ?, ?, ?)',
                 [
                 $firstname, $lastname, $phone, $email, $carDescription, $serviceType,
                 $originLabel, '', $originLat, $originLng,
-                $price, $uuid, false, date('Y-m-d H:i:s'), date('Y-m-d H:i:s'), 'Pending'
+                $price, $uuid, false, date('Y-m-d H:i:s'), date('Y-m-d H:i:s'), 'Pending', $earningPotential
                 ]
             );
         }

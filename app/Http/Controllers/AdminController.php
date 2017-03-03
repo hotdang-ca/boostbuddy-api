@@ -43,42 +43,7 @@ class AdminController extends Controller
       $pendingOrder = DB::table('servicerequests')
                           ->where('order_number', $order)
                           ->first();
-      // based on rules, this has an earning potential.
 
-        $earningPotential = 55;
-
-        switch ($pendingOrder->service_type) {
-            case 'tow':
-                $earningPotential += 30; // base
-
-                // plus if winching
-                if ($pendingOrder->needs_winch) {
-                  $earningPotential += 20;
-                }
-
-                // plus if flatbed/dolly is required
-                if ($pendingOrder->needs_flatbed) {
-                  $earningPotential += 20;
-                }
-
-                // plus kms > 15km
-                // it is in meters
-                if ($pendingOrder->tow_distance > 15000) {
-                  $differenceInKm = $pendingOrder->tow_distance - 15000;
-                  $earningPotential += (($differenceInKm / 1000) * 2.5);
-                }
-
-                break;
-            case 'fuel':
-                $earningPotential += 10;
-                break;
-
-            default:
-                $earningPotential = 55;
-        }
-
-        $pendingOrder->earningPotential = $earningPotential;
-
-        return view('orderinfo', ['order' => $pendingOrder, 'provider' => $provider]);
+      return view('orderinfo', ['order' => $pendingOrder, 'provider' => $provider]);
     }
 }
