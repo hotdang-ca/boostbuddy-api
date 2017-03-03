@@ -257,7 +257,7 @@ class OnboardingController extends Controller
         foreach ($providers as $provider) {
           Mail::send('providers.emails.newservicerequest', ['provider' => $provider, 'order' => $order ], function ($m) use ($provider, $order) {
             $m->from('hello@boostbuddy.ca', 'Boostbuddy Service');
-            $m->to($order->email, "$order->firstname $order->lastname")->subject('New Boostbuddy Service Request!');
+            $m->to($provier->email, $provider->name)->subject('New Boostbuddy Service Request!');
           });
         }
 
