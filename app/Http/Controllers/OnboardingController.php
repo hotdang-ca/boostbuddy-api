@@ -3,6 +3,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use Mail;
+
 use Stripe\Stripe;
 use Stripe\Charge;
 
@@ -247,6 +249,19 @@ class OnboardingController extends Controller
         }
 
         $results = DB::select("SELECT * FROM servicerequests WHERE order_number = '$uuid'");
+
+        // send mail to serviceproviders
+
+        $providers = DB::select("SELECT name, email FROM serviceproviders");
+
+        foreach ($providers as $provider) {
+          Mail::send('providers.emails.newservicerequest', ['provider' => $provider, 'order' => $results[0] ], function ($m) use ($user) {
+            $m->from('hello@boostbuddy.ca', 'Boostbuddy Service');
+            $m->to($user->email, $user->name)->subject('New Boostbuddy Service Request!');
+          });
+        }
+
+
         return response()->json($results[0]);
     }
 
