@@ -31,6 +31,6 @@
 <p><?php echo ($order->isPaid ? 'Yes' : 'No'); ?></em></p>
 <p><big><strong>This Job Pays:</strong></big> <?php echo $order->earning_potential ?></p>
 
-<p>To take the service request, and learn more details, <a href="https://api.boostbuddy.ca/admin/orders/58acaccee1a96/info/<?php echo($provider->uuid); ?>"</a>Click here</a></p>
+<p>To take the service request, and learn more details, <a href="https://api.boostbuddy.ca/admin/orders/<?php echo($order->order_number); ?>/info/<?php echo($provider->uuid); ?>"</a>Click here</a></p>
 
-<small>This email was sent to <?php echo ($provider->name); ?> on behalf of Boostbuddy. 
+<small>This email was sent to <?php echo ($provider->name); ?> on behalf of Boostbuddy.
