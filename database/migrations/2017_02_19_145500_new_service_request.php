@@ -33,12 +33,12 @@ class NewServiceRequest extends Migration
             $table->string('destination_lat')->nullable();
             $table->string('destination_lng')->nullable();
 
-            $table->integer('tow_distance')->nullable();
-            $table->integer('quoted_price');
+            $table->double('tow_distance')->nullable(); // in meters
+            $table->double('quoted_price')->default(0.0);
+            $table->double('amountPaid')->nullable();
 
             $table->string('order_number');
             $table->boolean('isPaid');
-            $table->integer('amountPaid')->nullable();
 
             $table->timestamps();
         });
