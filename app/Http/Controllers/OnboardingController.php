@@ -218,6 +218,10 @@ class OnboardingController extends Controller
                 $earningPotential = 55;
         }
 
+        // normalize numbers
+        $earningPotential = number_format($earningPotential, 2);
+        $price = number_format($price, 2);
+        
       // we have everything we need... let's store it.
         if (strcmp($serviceType, 'tow') === 0) {
             DB::insert(
