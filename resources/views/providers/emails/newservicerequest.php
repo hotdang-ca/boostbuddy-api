@@ -29,7 +29,7 @@
 <p><strong>Customer's Phone Number:</strong> <?php echo($order->phone) ?></p>
 <p><strong>Paid: </strong></p>
 <p><?php echo ($order->isPaid ? 'Yes' : 'No'); ?></em></p>
-<p><big><strong>This Job Pays:</strong></big> <?php echo $order->earning_potential ?></p>
+<p><big><strong>This Job Pays:</strong></big> $<?php echo(number_format($order->earning_potential, 2)); ?></p>
 
 <p>To take the service request, and learn more details, <a href="https://api.boostbuddy.ca/admin/orders/<?php echo($order->order_number); ?>/info/<?php echo($provider->uuid); ?>"</a>Click here</a></p>
 

@@ -80,8 +80,19 @@ class OnboardingController extends Controller
                 'status_code' => 2
               ]
             );
-              // TODO: send an email to announce that it's paid... and set status code to 3
 
+          // TODO: send this as a scheduled service, rather than interactively
+          // send mail to serviceproviders
+          $results = DB::select("SELECT * FROM servicerequests WHERE order_number = '$order'");
+          $thisOrder = $results[0];
+
+          $providers = DB::select("SELECT * FROM serviceproviders");
+          foreach ($providers as $provider) {
+            Mail::send('providers.emails.newservicerequest', ['provider' => $provider, 'order' => $thisOrder ], function ($m) use ($provider, $thisOrder) {
+              $m->from('hello@boostbuddy.ca', 'Boostbuddy Service');
+              $m->to($provider->email, $provider->name)->subject('New Boostbuddy Service Request!');
+            });
+          }
         }
 
         if (setcookie("boostbuddy-order", $order, strtotime( '+30 days' ), "/", ".boostbuddy.ca", false, false)) {
@@ -250,19 +261,8 @@ class OnboardingController extends Controller
 
         $results = DB::select("SELECT * FROM servicerequests WHERE order_number = '$uuid'");
         $order = $results[0];
-        // send mail to serviceproviders
 
-        $providers = DB::select("SELECT * FROM serviceproviders");
-
-        foreach ($providers as $provider) {
-          Mail::send('providers.emails.newservicerequest', ['provider' => $provider, 'order' => $order ], function ($m) use ($provider, $order) {
-            $m->from('hello@boostbuddy.ca', 'Boostbuddy Service');
-            $m->to($provider->email, $provider->name)->subject('New Boostbuddy Service Request!');
-          });
-        }
-
-
-        return response()->json($results[0]);
+        return response()->json($order);
     }
 
     public function receiveNameAndLocation(Request $request)
