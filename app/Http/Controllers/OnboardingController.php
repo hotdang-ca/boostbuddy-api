@@ -249,15 +249,15 @@ class OnboardingController extends Controller
         }
 
         $results = DB::select("SELECT * FROM servicerequests WHERE order_number = '$uuid'");
-
+        $order = $results[0];
         // send mail to serviceproviders
 
-        $providers = DB::select("SELECT name, email FROM serviceproviders");
+        $providers = DB::select("SELECT * FROM serviceproviders");
 
         foreach ($providers as $provider) {
-          Mail::send('providers.emails.newservicerequest', ['provider' => $provider, 'order' => $results[0] ], function ($m) use ($user) {
+          Mail::send('providers.emails.newservicerequest', ['provider' => $provider, 'order' => $order ], function ($m) use ($provider, $order) {
             $m->from('hello@boostbuddy.ca', 'Boostbuddy Service');
-            $m->to($user->email, $user->name)->subject('New Boostbuddy Service Request!');
+            $m->to($provider->email, $provider->name)->subject('New Boostbuddy Service Request!');
           });
         }
 
