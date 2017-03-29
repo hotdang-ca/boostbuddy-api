@@ -130,11 +130,14 @@ class ServiceProvidersApiController extends Controller
         $newStatusCode = $request->code;
         $statusText = "";
         $serviceProvider = $serviceProvider->name;
+        $newEarningPotential = $serviceRequest->earning_potential;
 
         if ($newStatusCode == 5) {
           $statusText = "Completed";
         } else if ($newStatusCode == 6) {
           $statusText = "Provider marked Gone On Arrival";
+          $newEarningPotential = 25.0;
+
         } else if ($newStatusCode == 7) {
           $statusText = "Provider cancelled the request.";
         } else if ($newStatusCode == 2) {
@@ -149,7 +152,8 @@ class ServiceProvidersApiController extends Controller
           [
             'status_code' => $newStatusCode,
             'status' => $statusText,
-            'service_provider' => $serviceProvider
+            'service_provider' => $serviceProvider,
+            'earning_potential' => $newEarningPotential
           ]
         );
 
