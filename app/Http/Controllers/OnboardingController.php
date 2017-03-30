@@ -55,7 +55,7 @@ class OnboardingController extends Controller
           error_log($e);
           // TODO: redirect to pay screen, with error text in the GET param
           $errorReason = $e->jsonBody['error']['message'];
-          header("Location: https://service.boostbuddy.ca/payment-details?message=$errorReason");
+          header("Location: https://boostbuddy.ca/payment-details?message=$errorReason");
           exit();
           // return response()->json(array("error" => $errorReason ));
         }
@@ -116,7 +116,7 @@ class OnboardingController extends Controller
     {
         $order = $_COOKIE['boostbuddy-order'];
         if (isset($order)) {
-            header("Location: https://service.boostbuddy.ca/status");
+            header("Location: https://boostbuddy.ca/status");
             exit();
         } else {
             return response()->json($_COOKIE);
@@ -221,7 +221,7 @@ class OnboardingController extends Controller
         // normalize numbers
         $earningPotential = number_format($earningPotential, 2);
         $price = number_format($price, 2);
-        
+
       // we have everything we need... let's store it.
         if (strcmp($serviceType, 'tow') === 0) {
             DB::insert(
