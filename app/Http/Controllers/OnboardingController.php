@@ -41,10 +41,10 @@ class OnboardingController extends Controller
         $isPaid = $pendingOrder->isPaid;
         $quotedPrice = $pendingOrder->quoted_price;
 
-        $TEST_KEY = "sk_test_syNOkivWAVuWiTqUOyVCdlUw";
-        $PROD_KEY = "";
-
-        $API_KEY = $TEST_KEY;
+        $TEST_KEY = "***REMOVED***";
+        $PROD_KEY = "***REMOVED***";
+        $API_KEY = $PROD_KEY;
+        
         Stripe::setApiKey($API_KEY);
         $token = $request->stripeToken;
 
