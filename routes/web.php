@@ -17,11 +17,11 @@ Route::get('/', function () {
   // TODO: redirect
     return 'oh hai!';
 });
-
+// ->middleware('auth')
 Route::group(['prefix' => 'admin'], function () {
-    Route::get('/orders', 'AdminController@showAllServiceRequests');
-    Route::get('/orders/{order}/info/{uuid}', 'AdminController@showServiceRequestInfo');
+  Route::get('/orders', 'AdminController@showAllServiceRequests')->middleware('auth.basic');
+  Route::get('/orders/{order}/info/{uuid}', 'AdminController@showServiceRequestInfo')->middleware('auth.basic');
 
-    Route::get('/providers', 'ServiceProvidersController@listServiceProviders');
-    Route::get('/providers/{id}/info', 'ServiceProvidersController@providerDetails');
+  Route::get('/providers', 'ServiceProvidersController@listServiceProviders')->middleware('auth.basic');
+  Route::get('/providers/{id}/info', 'ServiceProvidersController@providerDetails')->middleware('auth.basic');
 });

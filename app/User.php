@@ -9,6 +9,9 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+
+    // Manually create user:
+    // $user = App\User::create(['name' => 'Admin', 'email' => 'admin', 'password' => Hash::make('')]);
     /**
      * The attributes that are mass assignable.
      *

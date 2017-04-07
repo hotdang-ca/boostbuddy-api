@@ -71,7 +71,7 @@
                 ?>
                 <tr>
                   <td><a href="/admin/orders/<?php echo($order->order_number); ?>/info/admin"><?php echo $order->order_number; ?></a></td>
-                  <td><?php echo ( '$' . number_format($order->quoted_price, 2) . '/ $' . number_format($order->amountPaid, 2) ); ?></td>
+                  <td><?php echo ( '$' . number_format($order->quoted_price, 2) . ' / $' . number_format($order->amountPaid, 2) ); ?></td>
                   <td><?php echo ($order->isPaid ? 'Yes' : 'No'); ?></td>
                   <td><?php echo ($order->status); ?></td>
                   <td><?php echo ($order->service_type); ?></td>
