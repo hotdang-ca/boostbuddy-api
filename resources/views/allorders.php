@@ -75,13 +75,13 @@
                   <td><?php echo ($order->isPaid ? 'Yes' : 'No'); ?></td>
                   <td><?php echo ($order->status); ?></td>
                   <td><?php echo ($order->service_type); ?></td>
-                  <td><?php echo ($order->firstname . " " . $order->lastname) ?></td>
+                  <td><?php echo ($order->firstname . " " . $order->lastname . "<br/>(<a href=\"mailto:" . $order->email . "\">" . $order->email . "</a>)") ?></td>
                   <td><?php echo ($order->phone) ?></td>
                   <td><?php echo ($order->service_provider); ?></td>
                   <td><?php echo ($order->updated_at) ?></td>
                   <td>
-                    <button class="btn btn-danger btn-xs">Cancel</button>
-                    <button class="btn btn-warning btn-xs">Reassign</button>
+                    <!-- <button class="btn btn-danger btn-xs">Cancel</button> -->
+                    <!-- <button class="btn btn-warning btn-xs">Reassign</button> -->
                   </td>
                 </tr>
                 <?php
