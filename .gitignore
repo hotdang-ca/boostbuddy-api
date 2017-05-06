@@ -3,3 +3,8 @@
 Homestead.json
 Homestead.yaml
 .env
+/storage/*
+/database/*
+.lock
+.lck
+
