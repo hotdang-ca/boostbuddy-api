@@ -271,6 +271,12 @@ class OnboardingController extends Controller
         $results = DB::select("SELECT * FROM servicerequests WHERE order_number = '$uuid'");
         $order = $results[0];
 
+        // Notify the admin
+        Mail::send('admin.emails.newservicerequest', ['order' => $order ], function ($m) use ($order) {
+          $m->from('hello@boostbuddy.ca', 'Boostbuddy Service');
+          $m->to("logandd@hotmail.com", "BoostBuddy Admin")->subject('New Boostbuddy Service Request!');
+        });
+
         return response()->json($order);
     }
 
