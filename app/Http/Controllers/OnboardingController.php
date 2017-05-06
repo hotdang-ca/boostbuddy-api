@@ -153,7 +153,7 @@ class OnboardingController extends Controller
           $destinationLat = $request->destination['lat'];
           $destinationLng = $request->destination['lng'];
           $destinationLabel = $request->destination['label'];
-          $destinationQuotedDistance = $request->destination['quoted_distance'];
+          $destinationQuotedDistance = intval(str_replace("," , "", $request->destination['quoted_distance']));
         }
 
       // // TODO: is the lat/lng even in the service area?
