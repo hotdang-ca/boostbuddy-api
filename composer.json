@@ -18,7 +18,8 @@
         "symfony/class-loader": "^3.2",
         "symfony/config": "^3.2",
         "barryvdh/laravel-cors": "^0.8.6",
-        "guzzlehttp/guzzle": "~5.3|~6.0"
+        "guzzlehttp/guzzle": "~5.3|~6.0",
+        "aloha/twilio": "^3.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
