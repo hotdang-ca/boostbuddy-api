@@ -98,8 +98,9 @@ class OnboardingController extends Controller
 
             $orderNum = $thisOrder->order_number;
             $providerUid = $provider->uuid;
+            $providerNumber = $provider->phone;
             $twilioMessage = "New Boostbuddy Service Request. To view, click https://api.boostbuddy.ca/admin/orders/$orderNum/info/$providerUid";
-            Twilio::message("204-995-9502" /* TODO: $provider->number */, $twilioMessage);
+            Twilio::message($providerNumber, $twilioMessage);
 
             Mail::send('providers.emails.newservicerequest', ['provider' => $provider, 'order' => $thisOrder ], function ($m) use ($provider, $thisOrder) {
               $m->from('hello@boostbuddy.ca', 'Boostbuddy Service');
