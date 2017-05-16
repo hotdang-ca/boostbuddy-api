@@ -178,6 +178,8 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         Barryvdh\Cors\ServiceProvider::class,
+
+        Aloha\Twilio\Support\Laravel\ServiceProvider::class,
     ],
 
     /*
@@ -226,7 +228,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-
+        'Twilio' => 'Aloha\Twilio\Support\Laravel\Facade',
     ],
 
 ];

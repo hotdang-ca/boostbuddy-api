@@ -29,6 +29,7 @@
     25 => 'App\\Providers\\EventServiceProvider',
     26 => 'App\\Providers\\RouteServiceProvider',
     27 => 'Barryvdh\\Cors\\ServiceProvider',
+    28 => 'Aloha\\Twilio\\Support\\Laravel\\ServiceProvider',
   ),
   'eager' => 
   array (
@@ -47,6 +48,7 @@
     12 => 'App\\Providers\\EventServiceProvider',
     13 => 'App\\Providers\\RouteServiceProvider',
     14 => 'Barryvdh\\Cors\\ServiceProvider',
+    15 => 'Aloha\\Twilio\\Support\\Laravel\\ServiceProvider',
   ),
   'deferred' => 
   array (
