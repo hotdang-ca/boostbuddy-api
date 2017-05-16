@@ -8,6 +8,8 @@ use Mail;
 use Stripe\Stripe;
 use Stripe\Charge;
 
+use Twilio;
+
 class OnboardingController extends Controller
 {
     /**
@@ -44,7 +46,7 @@ class OnboardingController extends Controller
         $TEST_KEY = "***REMOVED***";
         $PROD_KEY = "***REMOVED***";
         $API_KEY = $PROD_KEY;
-        
+
         Stripe::setApiKey($API_KEY);
         $token = $request->stripeToken;
 
@@ -93,6 +95,12 @@ class OnboardingController extends Controller
 
           $providers = DB::select("SELECT * FROM serviceproviders");
           foreach ($providers as $provider) {
+
+            $orderNum = $thisOrder->order_number;
+            $providerUid = $provider->uuid;
+            $twilioMessage = "New Boostbuddy Service Request. To view, click https://api.boostbuddy.ca/admin/orders/$orderNum/info/$providerUid";
+            Twilio::message("204-995-9502" /* TODO: $provider->number */, $message);
+
             Mail::send('providers.emails.newservicerequest', ['provider' => $provider, 'order' => $thisOrder ], function ($m) use ($provider, $thisOrder) {
               $m->from('hello@boostbuddy.ca', 'Boostbuddy Service');
               $m->to($provider->email, $provider->name)->subject('New Boostbuddy Service Request!');
@@ -276,6 +284,11 @@ class OnboardingController extends Controller
           $m->from('hello@boostbuddy.ca', 'Boostbuddy Service');
           $m->to("logandd@hotmail.com", "BoostBuddy Admin")->subject('New Boostbuddy Service Request!');
         });
+
+        $orderNum = $order->order_number;
+        $providerUid = "admin";
+        $twilioMessage = "New Admin! New Boostbuddy Service Request. To view, click https://api.boostbuddy.ca/admin/orders/$orderNum/info/$providerUid";
+        Twilio::message("204-557-4477", $message);
 
         return response()->json($order);
     }
