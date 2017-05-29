@@ -288,7 +288,7 @@ class OnboardingController extends Controller
 
         $orderNum = $order->order_number;
         $providerUid = "admin";
-        $twilioMessage = "New Admin! New Boostbuddy Service Request. To view, click https://api.boostbuddy.ca/admin/orders/$orderNum/info/$providerUid";
+        $twilioMessage = "Hey Admin! New Boostbuddy Service Request. To view, click https://api.boostbuddy.ca/admin/orders/$orderNum/info/$providerUid";
         Twilio::message("204-557-4477", $twilioMessage);
 
         return response()->json($order);
