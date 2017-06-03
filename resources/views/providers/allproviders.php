@@ -82,8 +82,10 @@
                   <td><?php echo $provider->phone; ?></td>
                   <td><?php echo $provider->email; ?></td>
                   <td>
-                    <button class="btn btn-danger btn-xs">Cancel</button>
-                    <button class="btn btn-warning btn-xs">Reassign</button>
+                    <!--
+                      <button class="btn btn-danger btn-xs">Cancel</button>
+                      <button class="btn btn-warning btn-xs">Reassign</button>
+                    -->
                   </td>
                 </tr>
                 <?php
@@ -162,10 +164,8 @@
             </form>
           </div>
           <div class="modal-footer">
-          <!--
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             <button type="button" class="btn btn-primary" id="submit">Add</button>
-          -->
           </div>
         </div>
       </div>
