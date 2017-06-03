@@ -10,24 +10,28 @@ class ServiceProvidersApiController extends Controller
     public function addProvider(Request $request) {
 
       $uuid = uniqid();
+      // error_log($request);
 
       DB::insert(
           'insert into serviceproviders
           (
             name, billing_name, address,
             phone, email, uuid,
-            lat, lng, radius
+            lat, lng, radius,
+            rateBoost, rateTire, rateTow, rateLockout, rateFuel
           )
           values
           (
             ?, ?, ?,
             ?, ?, ?,
-            ?, ?, ?
+            ?, ?, ?,
+            ?, ?, ?, ?, ?
           )',
           [
             $request->name, $request->billing_name, $request->address,
             $request->phone, $request->email, $uuid,
-            $request->lat, $request->lng, $request->radius
+            $request->lat, $request->lng, $request->radius,
+            $request->boost, $request->tire, $request->tow, $request->lockout, $request->fuel
           ]
       );
 

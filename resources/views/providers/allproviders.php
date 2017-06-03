@@ -149,6 +149,15 @@
                       <label for="lng">Lng:</label><input class="form-control" type="text" id="lng" name="lng" placeholder="Longitude"/>
                       <label for="radius">Radius:</label><input class="form-control" type="number" id="radius" name="radius" placeholder="250m default radius"/>
                     </div>
+
+                    <div class="form-group">
+                      <label for="tow">Base Tow Rate:</label><input class="form-control" type="number" id="tow" name="tow" value="0" placeholder=""/>
+                      <label for="lockout">Vehicle Lockout Rate:</label><input class="form-control" type="number" id="lockout" name="lockout" value="0" placeholder=""/>
+                      <label for="tire">Tire Change Rate:</label><input class="form-control" type="number" id="tire" name="tire" value="0" placeholder=""/>
+                      <label for="fuel">Fuel Rate:</label><input class="form-control" type="number" id="fuel" name="fuel" value="0" placeholder=""/>
+                      <label for="boost">Boost Rate:</label><input class="form-control" type="number" id="boost" name="boost" value="0" placeholder=""/>
+                    </div>
+
                 </div>
             </form>
           </div>

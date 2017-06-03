@@ -18,6 +18,11 @@ submitButton.addEventListener("click", function(e) {
   var lat = document.getElementById("lat").value;
   var lng = document.getElementById("lng").value;
   var radius = document.getElementById("radius").value;
+  var boost = document.getElementById("boost").value;
+  var tow = document.getElementById("tow").value;
+  var lockout = document.getElementById("lockout").value;
+  var fuel = document.getElementById("fuel").value;
+  var tire = document.getElementById("tire").value;
 
   if (validateEmail(email) && validateName(name)) {
     var xmlhttp = new XMLHttpRequest();
@@ -42,7 +47,12 @@ submitButton.addEventListener("click", function(e) {
         address: address,
         lat: lat,
         lng: lng,
-        radius: radius
+        radius: radius,
+        boost: boost,
+        fuel: fuel,
+        lockout: lockout,
+        tire: tire,
+        tow: tow,
       }
     ));
   } else {
