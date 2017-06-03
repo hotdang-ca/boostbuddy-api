@@ -61,6 +61,7 @@
                 <td>Customer</td>
                 <td>Phone</td>
                 <td>Assigned</td>
+                <td>Payout</td>
                 <td>Date Added</td>
                 <td>Actions</td>
               </tr>
@@ -77,7 +78,65 @@
                   <td><?php echo ($order->service_type); ?></td>
                   <td><?php echo ($order->firstname . " " . $order->lastname . "<br/>(<a href=\"mailto:" . $order->email . "\">" . $order->email . "</a>)") ?></td>
                   <td><?php echo ($order->phone) ?></td>
-                  <td><?php echo ($order->service_provider); ?></td>
+                  <td><?php echo ($order->service_provider); ?>
+                  </td>
+                  <td>
+                    <?php
+                      foreach ($providers as $provider) {
+                        if ($provider->name == $order->service_provider) {
+                          if ($order->status_code == 6) {
+                            // GOA
+                            echo("$" . number_format(35, 2));
+                          } else if ($order->status_code == 5) {
+                            // complete
+                            $lookup = "";
+                            $extra = 0;
+
+                            switch ($order->service_type) {
+                              case "tow":
+                                $lookup = "rateTow";
+                                $extra += 30; // base
+                                // plus if winching
+                                if ($order->needs_winch) {
+                                  $extra += 20;
+                                } else if ($order->needs_flatbed) {
+                                  $extra += 20;
+                                }
+
+                                // plus kms > 15km
+                                // it is in meters
+                                if ($order->tow_distance > 15000) {
+                                  $differenceInKm = $order->tow_distance - 15000;
+                                  $extra += (($differenceInKm / 1000) * 2.5);
+                                }
+                                break;
+                              case "jump":
+                                $lookup = "rateBoost";
+                                break;
+                              case "tire":
+                                $lookup = "rateTire";
+                                break;
+                              case "fuel";
+                                $lookup = "rateFuel";
+                                $extra += 10;
+                                break;
+                              case "lockout";
+                                $lookup = "rateLockout";
+                                break;
+                            }
+
+                            // determine earning potential for this provider
+                            $earningPotential = $provider->$lookup + $extra;
+                            $earningPotential = number_format($earningPotential, 2);
+
+                            echo("$" . $earningPotential);
+                          } else {
+                           echo("<small>service not payable</small>");
+                          }
+                        }
+                      }
+                    ?>
+                  </td>
                   <td><?php echo ($order->updated_at) ?></td>
                   <td>
                     <!-- <button class="btn btn-danger btn-xs">Cancel</button> -->

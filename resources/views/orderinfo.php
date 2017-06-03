@@ -145,10 +145,14 @@
                       break;
                   }
                   // determine earning potential for this provider
-                  $earningPotential = $provider->$lookup + $extra;
-                  $earningPotential = number_format($earningPotential, 2);
+                  if ($provider->name == 'admin') {
+                    $earningPotential = 0;
+                  } else {
+                    $earningPotential = $provider->$lookup + $extra;
+                    $earningPotential = number_format($earningPotential, 2);
+                  }
                 ?>
-                <dd><p><big>$<?php echo ($earningPotential); ?></em></big></p></dd>
+                <dd><p><big><?php echo ($earningPotential > 0 ? '$' . $earningPotential : 'Depends on provider'); ?></em></big></p></dd>
               </tr>
 
             </dl>
@@ -181,7 +185,7 @@
                   <div class="row">
                     <h3>Right on!</h3>
                     <p>The job has been marked complete. You will be paid in 5-7 Business Days.</p>
-                    <p>Record your order number: <strong><?php echo $order->order_number; ?></strong> and quoted pay: $<strong><?php echo(number_format($order->earning_potential, 2)); ?></strong></p>
+                    <p>Record your order number: <strong><?php echo $order->order_number; ?></strong> and quoted pay: $<strong><?php echo($earningPotential); ?></strong></p>
                   </div>
                 <?php
               } else {
