@@ -108,7 +108,51 @@
 
               <tr>
                 <dt><p class="small"><big>This Job Pays:</big></p></dt>
-                <dd><p><big>$<?php echo (number_format($order->earning_potential, 2)); ?></em></big></p></dd>
+                <?php
+                  $lookup = "";
+                  $extra = 0;
+
+                  switch ($order->service_type) {
+                    case "tow":
+                      $lookup = "rateTow";
+                      $extra += 30; // base
+                      // plus if winching
+                      if ($order->needs_winch) {
+                        $extra += 20;
+                      } else if ($order->needs_flatbed) {
+                        $extra += 20;
+                      }
+
+                      // plus kms > 15km
+                      // it is in meters
+                      if ($order->tow_distance > 15000) {
+                        $differenceInKm = $order->tow_distance - 15000;
+                        $extra += (($differenceInKm / 1000) * 2.5);
+                      }
+                      break;
+                    case "jump":
+                      $lookup = "rateBoost";
+                      break;
+                    case "tire":
+                      $lookup = "rateTire";
+                      break;
+                    case "fuel";
+                      $lookup = "rateFuel";
+                      $extra += 10;
+                      break;
+                    case "lockout";
+                      $lookup = "rateLockout";
+                      break;
+                  }
+                  // determine earning potential for this provider
+                  if ($provider->name == 'admin') {
+                    $earningPotential = 0;
+                  } else {
+                    $earningPotential = $provider->$lookup + $extra;
+                    $earningPotential = number_format($earningPotential, 2);
+                  }
+                ?>
+                <dd><p><big><?php echo ($earningPotential > 0 ? '$' . $earningPotential : 'Depends on provider'); ?></em></big></p></dd>
               </tr>
 
             </dl>
@@ -141,7 +185,7 @@
                   <div class="row">
                     <h3>Right on!</h3>
                     <p>The job has been marked complete. You will be paid in 5-7 Business Days.</p>
-                    <p>Record your order number: <strong><?php echo $order->order_number; ?></strong> and quoted pay: $<strong><?php echo(number_format($order->earning_potential, 2)); ?></strong></p>
+                    <p>Record your order number: <strong><?php echo $order->order_number; ?></strong> and quoted pay: $<strong><?php echo($earningPotential); ?></strong></p>
                   </div>
                 <?php
               } else {
@@ -178,7 +222,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-offset-6 boostbuddy-copyright">
-                      Copyright © 2016 BoostBuddy All rights reserved
+                      Copyright © 2016, 2017 BoostBuddy All rights reserved
                     </div>
                 </div>
             </div>

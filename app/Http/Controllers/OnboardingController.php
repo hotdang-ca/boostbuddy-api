@@ -92,11 +92,31 @@ class OnboardingController extends Controller
           // send mail to serviceproviders
           $results = DB::select("SELECT * FROM servicerequests WHERE order_number = '$order'");
           $thisOrder = $results[0];
+          $orderNum = $thisOrder->order_number;
+          $orderType = $thisOrder->service_type;
 
-          $providers = DB::select("SELECT * FROM serviceproviders");
+          // determine lookup value
+          $lookup = "";
+          switch ($orderType) {
+            case "tow":
+              $lookup = "rateTow";
+              break;
+            case "jump":
+              $lookup = "rateBoost";
+              break;
+            case "tire":
+              $lookup = "rateTire";
+              break;
+            case "fuel";
+              $lookup = "rateFuel";
+              break;
+            case "lockout";
+              $lookup = "rateLockout";
+              break;
+          }
+
+          $providers = DB::select("SELECT * FROM serviceproviders WHERE $lookup > 0");
           foreach ($providers as $provider) {
-
-            $orderNum = $thisOrder->order_number;
             $providerUid = $provider->uuid;
             $providerNumber = $provider->phone;
             $twilioMessage = "New Boostbuddy Service Request. To view, click https://api.boostbuddy.ca/admin/orders/$orderNum/info/$providerUid";
@@ -202,38 +222,7 @@ class OnboardingController extends Controller
           $price += 10;
         }
 
-// PROVIDER EARNING
-        $earningPotential = 55;
-
-        switch ($serviceType) {
-            case 'tow':
-                $earningPotential += 30; // base
-
-                // plus if winching
-                if ($needsWinch) {
-                  $earningPotential += 20;
-                } else if ($needsFlatbed) {
-                  $earningPotential += 20;
-                }
-
-                // plus kms > 15km
-                // it is in meters
-                if ($destinationQuotedDistance > 15000) {
-                  $differenceInKm = $destinationQuotedDistance - 15000;
-                  $earningPotential += (($differenceInKm / 1000) * 2.5);
-                }
-
-                break;
-            case 'fuel':
-                $earningPotential += 10;
-                break;
-
-            default:
-                $earningPotential = 55;
-        }
-
         // normalize numbers
-        $earningPotential = number_format($earningPotential, 2);
         $price = number_format($price, 2);
 
       // we have everything we need... let's store it.
@@ -244,19 +233,19 @@ class OnboardingController extends Controller
                   origin_label, origin_desc, origin_lat, origin_lng,
                   destination_label, destination_desc, destination_lat, destination_lng, tow_distance,
                   quoted_price, order_number, isPaid, created_at, updated_at, status,
-                  needs_winch, needs_flatbed, earning_potential
+                  needs_winch, needs_flatbed
                 ) values (
                   ?, ?, ?, ?, ?, ?,
                   ?, ?, ?, ?,
                   ?, ?, ?, ?, ?,
                   ?, ?, ?, ?, ?, ?,
-                  ?, ?, ?)',
+                  ?, ?)',
                 [
-                $firstname, $lastname, $phone, $email, $carDescription, $serviceType,
-                $originLabel, '', $originLat, $originLng,
-                $destinationLabel, '', $destinationLat, $destinationLng, $destinationQuotedDistance,
-                $price, $uuid, false, date('Y-m-d H:i:s'), date('Y-m-d H:i:s'), 'Pending',
-                $needsWinch, $needsFlatbed, $earningPotential
+                  $firstname, $lastname, $phone, $email, $carDescription, $serviceType,
+                  $originLabel, '', $originLat, $originLng,
+                  $destinationLabel, '', $destinationLat, $destinationLng, $destinationQuotedDistance,
+                  $price, $uuid, false, date('Y-m-d H:i:s'), date('Y-m-d H:i:s'), 'Pending',
+                  $needsWinch, $needsFlatbed
                 ]
             );
         } else {
@@ -264,15 +253,15 @@ class OnboardingController extends Controller
                 'insert into servicerequests (
                   firstname, lastname, phone, email, car_description, service_type,
                   origin_label, origin_desc, origin_lat, origin_lng,
-                  quoted_price, order_number, isPaid, created_at, updated_at, status, earning_potential
+                  quoted_price, order_number, isPaid, created_at, updated_at, status
                 ) values (
                   ?, ?, ?, ?, ?, ?,
                   ?, ?, ?, ?,
-                  ?, ?, ?, ?, ?, ?, ?)',
+                  ?, ?, ?, ?, ?, ?)',
                 [
-                $firstname, $lastname, $phone, $email, $carDescription, $serviceType,
-                $originLabel, '', $originLat, $originLng,
-                $price, $uuid, false, date('Y-m-d H:i:s'), date('Y-m-d H:i:s'), 'Pending', $earningPotential
+                  $firstname, $lastname, $phone, $email, $carDescription, $serviceType,
+                  $originLabel, '', $originLat, $originLng,
+                  $price, $uuid, false, date('Y-m-d H:i:s'), date('Y-m-d H:i:s'), 'Pending'
                 ]
             );
         }
