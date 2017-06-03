@@ -158,7 +158,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-offset-6 boostbuddy-copyright">
-                      Copyright © 2016 BoostBuddy All rights reserved
+                      Copyright © 2016, 2017 BoostBuddy All rights reserved
                     </div>
                 </div>
             </div>
