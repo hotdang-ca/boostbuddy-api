@@ -29,7 +29,49 @@
 <p><strong>Customer's Phone Number:</strong> <?php echo($order->phone) ?></p>
 <p><strong>Paid: </strong></p>
 <p><?php echo ($order->isPaid ? 'Yes' : 'No'); ?></em></p>
-<p><big><strong>This Job Pays:</strong></big> $<?php echo(number_format($order->earning_potential, 2)); ?></p>
+
+<?php
+  $lookup = "";
+  $extra = 0;
+
+  switch ($order->service_type) {
+    case "tow":
+      $lookup = "rateTow";
+      $extra += 30; // base
+      // plus if winching
+      if ($order->needs_winch) {
+        $extra += 20;
+      } else if ($order->needs_flatbed) {
+        $extra += 20;
+      }
+
+      // plus kms > 15km
+      // it is in meters
+      if ($order->tow_distance > 15000) {
+        $differenceInKm = $order->tow_distance - 15000;
+        $extra += (($differenceInKm / 1000) * 2.5);
+      }
+      break;
+    case "jump":
+      $lookup = "rateBoost";
+      break;
+    case "tire":
+      $lookup = "rateTire";
+      break;
+    case "fuel";
+      $lookup = "rateFuel";
+      $extra += 10;
+      break;
+    case "lockout";
+      $lookup = "rateLockout";
+      break;
+  }
+  // determine earning potential for this provider
+  $earningPotential = $provider->$lookup + $extra;
+  $earningPotential = number_format($earningPotential, 2);
+?>
+
+<p><big><strong>This Job Pays:</strong></big> $<?php echo($earningPotential); ?></p>
 
 <p>To take the service request, and learn more details, <a href="https://api.boostbuddy.ca/admin/orders/<?php echo($order->order_number); ?>/info/<?php echo($provider->uuid); ?>">Click here</a></p>
 
