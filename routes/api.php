@@ -13,6 +13,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'v0'], function () {
 
   // Admin Endpoints
     Route::post('/providers/add', 'ServiceProvidersApiController@addProvider');
+    Route::post('/providers/{uuid}/edit', 'ServiceProvidersApiController@editProvider');
 
   // Provider Endpoints
     Route::post('/service/request/{order}/take', 'ServiceProvidersApiController@takeJob');

@@ -67,7 +67,7 @@
       <h3>Edit Details</h3>
       <form action="/api/v0/providers/<?php echo($provider->uuid); ?>/edit" method="post" id="new_form">
           <div class="form-group">
-              <input type="hidden" id="uuid" name="uuid" value="<?php echo($provider->uuid)" />
+              <input type="hidden" id="uuid" name="uuid" value="<?php echo($provider->uuid); ?>" />
               <div class="form-group">
                 <label for="name">Provider Company:</label><input value="<?php echo($provider->name); ?>" class="form-control" type="text" id="name" name="name" placeholder="Provider Name"></input>
               </div>
