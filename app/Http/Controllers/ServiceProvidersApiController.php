@@ -39,6 +39,47 @@ class ServiceProvidersApiController extends Controller
       return response()->json($result[0]);
     }
 
+    public function editProvider(Request $request, $uuid) {
+      DB::update(
+          'UPDATE serviceproviders
+           SET
+            name=?,
+            billing_name=?,
+            address=?,
+            phone=?,
+            email=?,
+            lat=?,
+            lng=?,
+            radius=?,
+            rateBoost=?,
+            rateTire=?,
+            rateTow=?,
+            rateLockout=?,
+            rateFuel=?
+          WHERE uuid=?' ,
+          [
+            $request->name,
+            $request->billing_name,
+            $request->address,
+            $request->phone,
+            $request->email,
+            $request->lat,
+            $request->lng,
+            $request->radius,
+            $request->boost,
+            $request->tire,
+            $request->tow,
+            $request->lockout,
+            $request->fuel,
+
+            $uuid
+          ]
+      );
+
+      $result = DB::select("SELECT * FROM serviceproviders WHERE uuid = '$uuid' LIMIT 1");
+      return response()->json($result[0]);
+    }
+
     public function takeJob(Request $request, $order) {
       // job statuses:
       // 0. Pending -- when it's first created

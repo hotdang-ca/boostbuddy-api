@@ -18,7 +18,8 @@ class ServiceProvidersController extends Controller
       return view('providers.allproviders', ['providers' => $serviceProviders]);
     }
 
-    public function providerDetails(Request $request, $id) {
-
+    public function providerDetails(Request $request, $uuid) {
+      $serviceProvider = DB::table('serviceproviders')->where('uuid', $uuid)->first();
+      return view ('providers.providerdetails', ['provider' => $serviceProvider]);
     }
 }
