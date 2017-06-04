@@ -75,7 +75,7 @@
                 foreach ($providers as $provider) {
                 ?>
                 <tr>
-                  <td><a href="/admin/providers/<?php echo($provider->id); ?>/info"><?php echo $provider->uuid; ?></a></td>
+                  <td><a href="/admin/providers/<?php echo($provider->uuid); ?>/info"><?php echo $provider->uuid; ?></a></td>
                   <td><?php echo $provider->name; ?></td>
                   <td><?php echo $provider->billing_name; ?></td>
                   <td><?php echo $provider->address; ?></td>
