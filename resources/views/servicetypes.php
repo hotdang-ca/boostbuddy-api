@@ -30,6 +30,7 @@
     <style type="text/css">
       input {
         color: #000000 !important;
+        background-color: #030303;
       }
     </style>
 </head>
@@ -67,7 +68,7 @@
               ?>
                 <tr>
                   <td><img src="https://boostbuddy.ca<?php echo($type->icon_url); ?>" width="64" height="64" /></td>
-                  <td><?php echo ($type->name ? 'Yes' : 'No'); ?></td>
+                  <td><a onClick="prepForm('<?php echo $type->name; ?>', '<?php echo $type->display_name; ?>', '<?php echo $type->description; ?>', '<?php echo $type->client_price; ?>', '<?php echo $type->display_order; ?>', '<?php echo $type->id; ?>');" data-toggle="modal" data-target="#dialog-editservice"><?php echo($type->name . " / " . $type->id ); ?></a></td>
                   <td><?php echo ($type->display_name); ?></td>
                   <td><?php echo ($type->description); ?></td>
                   <td><?php echo ('$' . number_format($type->client_price, 2)); ?></td>
@@ -81,6 +82,52 @@
         </div>
       </div>
     </header>
+
+
+    <!-- Modals -->
+    <!-- Edit Service -->
+    <div class="modal fade" id="dialog-editservice" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h3 class="modal-title" id="modal-title">Edit Service Type</h3>
+          </div>
+          <div class="modal-body">
+            <form action="/api/v0/service/types" method="post" id="new_form">
+                <div class="form-group">
+                    <input type="hidden" id="service_id" name="service_id" value="" />
+
+                    <div class="form-group">
+                      <label for="name">Type Name:</label><input class="form-control" type="text" id="name" name="name" placeholder="Service Name"></input>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="display_name">Display Name:</label><input class="form-control" type="text" id="display_name" name="display_name" placeholder="Display Name">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="description">Description:</label><textarea class="form-control" id="description" name="description" placeholder="Description"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="client_price">Client Price:</label><input class="form-control" type="number" id="client_price" name="client_price" placeholder="0.00">
+                    </div>
+
+                    <div class="form-group">
+                      <label for="client_price">Display Order:</label><input class="form-control" type="number" id="display_order" name="display_order" placeholder="0">
+                    </div>
+                </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="submit">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /Modals -->
 
     <!-- Footer -->
     <footer class="text-center">
@@ -108,6 +155,9 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Form Handler -->
+    <script src="/js/editService.js"></script>
 
     <!-- Plugin JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>

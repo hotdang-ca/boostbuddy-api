@@ -15,4 +15,21 @@ class ResourcesApiController extends Controller
         return response()->json(array());
       }
     }
+
+    public function saveType(Request $request, $id) {
+      DB::table('servicetypes')
+          ->where('id', $id)
+          ->update(
+          [
+            'name' => $request->name,
+            'display_name' => $request->display_name,
+            'description' => $request->description,
+            'client_price' => $request->client_price,
+            'display_order' => $request->display_order
+          ]
+        );
+
+      $result = DB::table('servicetypes')->where('id', $id)->first();
+      return response()->json($result);
+    }
 }
