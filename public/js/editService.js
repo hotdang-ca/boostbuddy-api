@@ -28,7 +28,6 @@ submitButton.addEventListener("click", function(e) {
 
   var url = "/api/v0/service/type/" + service_id;
 
-  debugger;
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.open("POST", url);
   xmlhttp.setRequestHeader('Content-Type', 'application/json');
