@@ -21,4 +21,5 @@ Route::group(['middleware' => 'cors', 'prefix' => 'v0'], function () {
 
   // Resource Endpoints
     Route::get('/service/types', 'ResourcesApiController@listTypes');
+    Route::post('/service/type/{id}', 'ResourcesApiController@saveType');
 });

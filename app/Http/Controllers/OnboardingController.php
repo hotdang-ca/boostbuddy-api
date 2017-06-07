@@ -185,26 +185,10 @@ class OnboardingController extends Controller
           $destinationQuotedDistance = intval(str_replace("," , "", $request->destination['quoted_distance']));
         }
 
-      // // TODO: is the lat/lng even in the service area?
+        // TODO: is the lat/lng even in the service area?
+        $serviceTypeObject = DB::table('servicetypes')->where('name', $serviceType)->first();
 
-      // calculate some magic prices
-      // Hey Gents I've spent the last 4-5 hours playing around with pricing.
-      // I will be doing up a more formalized copy - but for your situational
-      // awareness this is the draft:
-      // Within the service area Cost to Customer $65 (Boost/Tire Change/Fuel Delivery/Lockout),
-      //  provider gets $55, leaving us with $10.
-      //  Tows must originate from the service area- Cost to Customer $99 for 20km or less,
-      //  $2.50/km beyond,
-      //  provider gets $84 and $2.00/km beyond 20km, we get $15 and $0.50/km beyond 20km.
-      //
-      // Basis is providers earn 85% revenue on flat fees and 80% on variable rates.
-      // Providers choose the radius they are willing to service for at these standard
-      // price points.
-
-
-
-// CUSTOMER PRICE
-        $price = 65;
+        $price = floatval($serviceTypeObject->client_price);
 
         if (strcmp($serviceType, 'tow') == 0) {
             $price += 34;
