@@ -26,6 +26,11 @@ class AdminController extends Controller
 
     }
 
+    public function showAllServiceTypes(Request $request) {
+      $serviceTypes = DB::table('servicetypes')->get();
+      return view('servicetypes', ['types' => $serviceTypes]);
+    }
+
     public function showAllServiceRequests(Request $request) {
       $pendingOrders = DB::table('servicerequests')->orderBy('updated_at', 'desc')->get();
       $providers = DB::table('serviceproviders')->get();

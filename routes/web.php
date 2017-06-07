@@ -21,6 +21,7 @@ Route::get('/', function () {
 Route::group(['prefix' => 'admin'], function () {
   Route::get('/orders', 'AdminController@showAllServiceRequests')->middleware('auth.basic');
   Route::get('/orders/{order}/info/{uuid}', 'AdminController@showServiceRequestInfo');
+  Route::get('/serviceTypes', 'AdminController@showAllServiceTypes')->middleware('auth.basic');
 
   Route::get('/providers', 'ServiceProvidersController@listServiceProviders')->middleware('auth.basic');
   Route::get('/providers/{uuid}/info', 'ServiceProvidersController@providerDetails');
