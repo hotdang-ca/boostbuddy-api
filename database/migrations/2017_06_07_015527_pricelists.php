@@ -19,6 +19,7 @@ class Pricelists extends Migration
             $table->string('display_name');
             $table->string('description');
             $table->string('icon_url');
+            $table->integer('display_order')->unsigned();
             $table->double('client_price')->default(0.0);
         });
     }
