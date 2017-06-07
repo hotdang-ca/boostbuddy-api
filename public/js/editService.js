@@ -4,10 +4,9 @@
  */
 
 function prepForm(name, display_name, description, client_price, display_order, id) {
-  console.log(id);
   document.getElementById("name").value = name;
   document.getElementById("display_name").value = display_name;
-  document.getElementById("description").innerHTML = description;
+  document.getElementById("description").value = description;
   document.getElementById("client_price").value = client_price;
   document.getElementById("display_order").value = display_order;
   document.getElementById("service_id").value = id;
@@ -21,14 +20,17 @@ submitButton.addEventListener("click", function(e) {
 
   var name = document.getElementById("name").value;
   var display_name = document.getElementById("display_name").value;
-  var description = document.getElementById("description").innerHTML;
+  var description = document.getElementById("description").value;
   var client_price = document.getElementById("client_price").value;
   var display_order = document.getElementById("display_order").value;
 
   var service_id = document.getElementById("service_id").value;
 
+  var url = "/api/v0/service/type/" + service_id;
+
+  debugger;
   var xmlhttp = new XMLHttpRequest();
-  xmlhttp.open("POST", "/api/v0/service/type/" + service_id);
+  xmlhttp.open("POST", url);
   xmlhttp.setRequestHeader('Content-Type', 'application/json');
 
   xmlhttp.onreadystatechange = function() {
@@ -47,7 +49,6 @@ submitButton.addEventListener("click", function(e) {
       description: description,
       client_price: client_price,
       display_order: display_order,
-      id: service_id,
     }
   ));
 });

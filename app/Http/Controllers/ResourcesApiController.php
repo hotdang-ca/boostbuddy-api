@@ -17,15 +17,21 @@ class ResourcesApiController extends Controller
     }
 
     public function saveType(Request $request, $id) {
+      $name = $request->name;
+      $display_name = $request->display_name;
+      $description = $request->description;
+      $client_price = $request->client_price;
+      $display_order = $request->display_order;
+
       DB::table('servicetypes')
           ->where('id', $id)
           ->update(
           [
-            'name' => $request->name,
-            'display_name' => $request->display_name,
-            'description' => $request->description,
-            'client_price' => $request->client_price,
-            'display_order' => $request->display_order
+            'name' => $name,
+            'display_name' => $display_name,
+            'description' => $description,
+            'client_price' => $client_price,
+            'display_order' => $display_order
           ]
         );
 
