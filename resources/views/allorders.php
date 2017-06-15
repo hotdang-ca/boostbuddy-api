@@ -82,11 +82,22 @@
                   </td>
                   <td>
                     <?php
+
+                      // these are provider prices over base
+                      // base is per client
+                      $fuelExtra = 5.0; // 5 extra, or $50.00
+                      $tireExtra = 10.0 * 0.85; // 10 extra, or $55.00
+                      $towExtra = 25.0 * 0.85; // 25 extra, or $70.00
+                      $towToolsExtra = 15.00 * 0.85; // 15 extra, or 45 + 25 + 15 = $85.00
+                      $goaRate = 35.00;
+                      $kmOverage = 10.0; // when per-km charge kicks in
+                      $kmExtra = 1.50 * 0.85; // km overage rate
+
                       foreach ($providers as $provider) {
                         if ($provider->name == $order->service_provider) {
                           if ($order->status_code == 6) {
                             // GOA
-                            echo("$" . number_format(35, 2));
+                            echo("$" . number_format($goaRate, 2));
                           } else if ($order->status_code == 5) {
                             // complete
                             $lookup = "";
@@ -95,19 +106,19 @@
                             switch ($order->service_type) {
                               case "tow":
                                 $lookup = "rateTow";
-                                $extra += 30; // base
+                                $extra += $towExtra; // base
                                 // plus if winching
                                 if ($order->needs_winch) {
-                                  $extra += 20;
+                                  $extra += $towToolsExtra;
                                 } else if ($order->needs_flatbed) {
-                                  $extra += 20;
+                                  $extra += $towToolsExtra;
                                 }
 
                                 // plus kms > 15km
                                 // it is in meters
-                                if ($order->tow_distance > 15000) {
-                                  $differenceInKm = $order->tow_distance - 15000;
-                                  $extra += (($differenceInKm / 1000) * 2.5);
+                                if ($order->tow_distance > $kmOverage * 1000) {
+                                  $differenceInKm = $order->tow_distance - ($kmOverage * 1000);
+                                  $extra += (($differenceInKm / 1000) * $kmExtra);
                                 }
                                 break;
                               case "jump":
@@ -115,10 +126,11 @@
                                 break;
                               case "tire":
                                 $lookup = "rateTire";
+                                $extra = $tireExtra;
                                 break;
                               case "fuel";
                                 $lookup = "rateFuel";
-                                $extra += 10;
+                                $extra += $fuelExtra;
                                 break;
                               case "lockout";
                                 $lookup = "rateLockout";

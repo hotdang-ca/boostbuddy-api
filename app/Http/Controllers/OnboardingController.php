@@ -25,6 +25,17 @@ class OnboardingController extends Controller
         $this->ERROR_415 = ['error' => ['code' => 415, 'description' => 'Your file type isn\'t welcome around these parts. Try a different file.']];
         $this->ERROR_413 = ['error' => ['code' => 413, 'description' => 'What are you trying to do?! That file is way too big.']];
         $this->SERVICE_TYPES = ['Boost', 'Tire Change', 'Fuel Delivery', 'Lock-out', 'Tow'];
+
+        // these are client quoted prices,
+        // and should be mirrored on the front-end.
+        // base is $45.00
+        $this->fuelExtra = 5.0; // 5 extra, or $50.00
+        $this->tireExtra = 10.0; // 10 extra, or $55.00
+        $this->towExtra = 25.0; // 25 extra, or $70.00
+        $this->towToolsExtra = 15.00; // 15 extra, or 45 + 25 + 15 = $85.00
+
+        $this->kmOverage = 10.0; // when per-km charge kicks in
+        $this->kmExtra = 1.50; // km overage rate
     }
 
     public function showServiceRequestStatus(Request $request, $order) {
@@ -191,19 +202,21 @@ class OnboardingController extends Controller
         $price = floatval($serviceTypeObject->client_price);
 
         if (strcmp($serviceType, 'tow') == 0) {
-            $price += 34;
+            $price += $this->towExtra;
 
             $kms = intval($destinationQuotedDistance) / 1000;
-            if ($kms > 15) { // its expressed in km
-                $difference = $kms - 15;
-                $price += ($difference * 3.00);
+            if ($kms > $this->kmOverage) { // its expressed in km
+                $difference = $kms - $this->kmOverage;
+                $price += ($difference * $this->kmExtra);
             }
             if ($needsWinch || $needsFlatbed) {
-              $price += 25;
+              $price += $this->towToolsExtra;
             }
 
         } else if (strcmp($serviceType, 'fuel') == 0) {
-          $price += 10;
+          $price += $this->fuelExtra;
+        } else if (strcmp($serviceType, 'tire') == 0) {
+          $price += $this->tireExtra;
         }
 
         // normalize numbers
