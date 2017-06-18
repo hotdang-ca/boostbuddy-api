@@ -126,7 +126,7 @@ class OnboardingController extends Controller
               break;
           }
 
-          if ($thisOrder->first_name == 'test' && $thisOrder->last_name == 'user') {
+          if ($thisOrder->firstname === 'test' && $thisOrder->lastname === 'user') {
             // TODO: its a test user... do test-things, like informing only a certain number of the new service request.
           } else {
             $providers = DB::select("SELECT * FROM serviceproviders WHERE $lookup > 0");
