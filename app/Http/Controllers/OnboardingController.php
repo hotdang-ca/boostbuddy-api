@@ -126,17 +126,20 @@ class OnboardingController extends Controller
               break;
           }
 
-          $providers = DB::select("SELECT * FROM serviceproviders WHERE $lookup > 0");
-          foreach ($providers as $provider) {
-            $providerUid = $provider->uuid;
-            $providerNumber = $provider->phone;
-            $twilioMessage = "New Boostbuddy Service Request. To view, click https://api.boostbuddy.ca/admin/orders/$orderNum/info/$providerUid";
-            Twilio::message($providerNumber, $twilioMessage);
-
-            Mail::send('providers.emails.newservicerequest', ['provider' => $provider, 'order' => $thisOrder ], function ($m) use ($provider, $thisOrder) {
-              $m->from('hello@boostbuddy.ca', 'Boostbuddy Service');
-              $m->to($provider->email, $provider->name)->subject('New Boostbuddy Service Request!');
-            });
+          if ($thisOrder->first_name == 'test' && $thisOrder->last_name == 'user') {
+            // TODO: its a test user... do test-things, like informing only a certain number of the new service request.
+          } else {
+            $providers = DB::select("SELECT * FROM serviceproviders WHERE $lookup > 0");
+            foreach ($providers as $provider) {
+              $providerUid = $provider->uuid;
+              $providerNumber = $provider->phone;
+              $twilioMessage = "New Boostbuddy Service Request. To view, click https://api.boostbuddy.ca/admin/orders/$orderNum/info/$providerUid";
+              Twilio::message($providerNumber, $twilioMessage);
+              Mail::send('providers.emails.newservicerequest', ['provider' => $provider, 'order' => $thisOrder ], function ($m) use ($provider, $thisOrder) {
+                $m->from('hello@boostbuddy.ca', 'Boostbuddy Service');
+                $m->to($provider->email, $provider->name)->subject('New Boostbuddy Service Request!');
+              });
+            }
           }
         }
 
@@ -217,6 +220,8 @@ class OnboardingController extends Controller
           $price += $this->fuelExtra;
         } else if (strcmp($serviceType, 'tire') == 0) {
           $price += $this->tireExtra;
+        } else if ($firstname == 'test' && $lastname == 'user' && $email == 'test@boostbuddy.com') {
+          $price = 1.0;
         }
 
         // normalize numbers
@@ -270,13 +275,14 @@ class OnboardingController extends Controller
         Mail::send('admin.emails.newservicerequest', ['order' => $order ], function ($m) use ($order) {
           $m->from('hello@boostbuddy.ca', 'Boostbuddy Service');
           $m->to("logandd@hotmail.com", "BoostBuddy Admin")->subject('New Boostbuddy Service Request!');
+          $m->to("james@hotdang.ca", "BoostBuddy Admin")->subject('New Boostbuddy Service Request!');
         });
 
         $orderNum = $order->order_number;
         $providerUid = "admin";
         $twilioMessage = "Hey Admin! New Boostbuddy Service Request. To view, click https://api.boostbuddy.ca/admin/orders/$orderNum/info/$providerUid";
         Twilio::message("204-557-4477", $twilioMessage);
-
+        Twilio::message("204-995-9502", $twilioMessage);
         return response()->json($order);
     }
 
