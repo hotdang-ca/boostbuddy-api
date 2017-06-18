@@ -204,7 +204,9 @@ class OnboardingController extends Controller
 
         $price = floatval($serviceTypeObject->client_price);
 
-        if (strcmp($serviceType, 'tow') == 0) {
+        if ($firstname === 'test' && $lastname === 'user' && $email === 'test@boostbuddy.ca') {
+          $price = 1.0;
+        } else if (strcmp($serviceType, 'tow') == 0) {
             $price += $this->towExtra;
 
             $kms = intval($destinationQuotedDistance) / 1000;
@@ -220,8 +222,6 @@ class OnboardingController extends Controller
           $price += $this->fuelExtra;
         } else if (strcmp($serviceType, 'tire') == 0) {
           $price += $this->tireExtra;
-        } else if ($firstname === 'test' && $lastname === 'user' && $email === 'test@boostbuddy.ca') {
-          $price = 1.0;
         }
 
         // normalize numbers
