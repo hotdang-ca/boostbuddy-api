@@ -220,7 +220,7 @@ class OnboardingController extends Controller
           $price += $this->fuelExtra;
         } else if (strcmp($serviceType, 'tire') == 0) {
           $price += $this->tireExtra;
-        } else if ($firstname == 'test' && $lastname == 'user' && $email == 'test@boostbuddy.com') {
+        } else if ($firstname === 'test' && $lastname === 'user' && $email === 'test@boostbuddy.ca') {
           $price = 1.0;
         }
 
