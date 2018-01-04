@@ -137,7 +137,7 @@ class OnboardingController extends Controller
               $twilioMessage = "New Boostbuddy Service Request. To view, click https://api.boostbuddy.ca/admin/orders/$orderNum/info/$providerUid";
 
               // TODO: replace with a user flag if the user is enabled/disabled
-              if (strpos($provider->email, 'DISABLED_') == false) {
+              if (strpos($provider->email, 'DISABLED_') === false) {
                 Twilio::message($providerNumber, $twilioMessage);
 
                 Mail::send('providers.emails.newservicerequest', ['provider' => $provider, 'order' => $thisOrder ], function ($m) use ($provider, $thisOrder) {
